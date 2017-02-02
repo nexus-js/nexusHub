@@ -1,0 +1,110 @@
+body {
+	margin: 0;
+	padding-left: 1.0em;
+/*	display: flex;
+	align-items: center;
+	justify-content: center;*/
+	font-family: 'Vollkorn', serif;
+	font-size: 1.0em;
+	/*overflow: hidden;*/
+	/*position: fixed;*/
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#causeway-text {
+	white-space: pre;
+}
+
+.sec{
+	display: none;
+}
+
+.sw, .se{
+  display: block;
+	text-align: center;
+}
+
+.sw p{
+	font-size: 1.0em
+}
+
+.sw .url{
+	font-size: 1.5em
+}
+
+#causeway-text span {
+	display: inline-block;
+}
+
+.symbol {
+	font-size: 2.0em;
+}
+
+small {
+	font-size: 0.5em;
+}
+
+/*.phrase:hover{
+	animation-name: zoomOutUp;
+	animation-duration: 10s;
+	animation-fill-mode: forwards;
+}*/
+
+@-webkit-keyframes zoomOutUp {
+  40% {
+    opacity: 1;
+    -webkit-transform: scale3d(.475, .475, .475) translate3d(0, 60px, 0);
+    transform: scale3d(.475, .475, .475) translate3d(0, 60px, 0);
+    -webkit-animation-timing-function: cubic-bezier(0.550, 0.055, 0.675, 0.190);
+    animation-timing-function: cubic-bezier(0.550, 0.055, 0.675, 0.190);
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: scale3d(.1, .1, .1) translate3d(0, -2000px, 0);
+    transform: scale3d(.1, .1, .1) translate3d(0, -2000px, 0);
+    -webkit-transform-origin: center bottom;
+    transform-origin: center bottom;
+    -webkit-animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1);
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1);
+  }
+}
+
+@keyframes zoomOutUp {
+  40% {
+    opacity: 1;
+    -webkit-transform: scale3d(.475, .475, .475) translate3d(0, 60px, 0);
+    transform: scale3d(.475, .475, .475) translate3d(0, 60px, 0);
+    -webkit-animation-timing-function: cubic-bezier(0.550, 0.055, 0.675, 0.190);
+    animation-timing-function: cubic-bezier(0.550, 0.055, 0.675, 0.190);
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: scale3d(.1, .1, .1) translate3d(0, -2000px, 0);
+    transform: scale3d(.1, .1, .1) translate3d(0, -2000px, 0);
+    -webkit-transform-origin: center bottom;
+    transform-origin: center bottom;
+    -webkit-animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1);
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1);
+  }
+}
+
+.zoomOutUp {
+  -webkit-animation-name: zoomOutUp;
+  animation-name: zoomOutUp;
+}
+
+.clicked{
+	-webkit-animation-name: zoomOutUp;
+	animation-name: zoomOutUp;
+	-webkit-animation-duration: 1.5s;
+	animation-duration: 1.5s;
+/*	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;*/
+}

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Causeway | Controller</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<link rel="stylesheet" href="styles/controller.css">
+	<link href="http://fonts.googleapis.com/css?family=Vollkorn" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+	<div class="sec sw">
+		<h1>Causeway</h1>
+		<p>Words | <strong>Vincent A. Cellucci</strong></p>
+		<p>Audio | <strong>Jesse Allison</strong></p>
+		<p>Visuals | <strong>Derick Ostrenko</strong></p>
+		<p><em>Instructions: Tapping is the new snapping.</em></p>
+		<p class="url">Visit http://emdm.io on your mobile device to participate.</p>
+	</div>
+
+	<div id="causeway-text"></div>
+
+	<div class="sec se">
+		END
+	</div>
+
+	<script type="text/javascript">
+		var socket = io.connect(window.location.origin, {
+			transports: ['websocket']
+		});
+		socket.emit('addme', {
+			name: "controller"
+		});
+
+		socket.on('chat', function(data) {
+			console.log(data);
+		});
+
+		socket.on('setSection', function(data) {
+			console.log("The section is now: " + data.title);
+		});
+
+		function scrollto(element) {
+			var ele = document.getElementsByClassName(element)[0];
+			if (!!ele) {
+				window.scrollTo(ele.offsetLeft, ele.offsetTop);
+			}
+		}
+
+		function clickgo() {
+			var elements = document.getElementsByClassName(this.className);
+			var section = elements[0].className.split(" ")[1];
+			scrollto(section);
+			var num = section.split("s")[1];
+			console.log(num);
+			socket.emit("section", num);
+		}
+
+		function triggerWord() {
+			socket.emit(this.id);
+
+			if(document.getElementById(String(this.id)).style.color == "blue") {
+				document.getElementById(String(this.id)).style.color = "red";
+			} else {
+				document.getElementById(String(this.id)).style.color = "blue";
+			}
+
+		}
+
+		window.onload = function() {
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'data/causeway.html', true);
+			xhr.onreadystatechange = function() {
+				if (this.readyState !== 4) return;
+				if (this.status !== 200) return; // or whatever error handling you want
+				document.getElementById("causeway-text").innerHTML = this.responseText;
+				addEvents();
+			};
+			xhr.send();
+
+			function addEvents() {
+				var triggerWords = document.getElementsByClassName("triggerWord");
+				console.log(triggerWords);
+				for (var n = 0; n < triggerWords.length; n++) {
+					triggerWords[n].addEventListener("click", triggerWord, false);
+					triggerWords[n].style.border = "2px orange solid";
+				}
+
+				var phrases = document.getElementsByClassName("sec");
+				console.log(phrases);
+				for (var i = 0; i < phrases.length; i++) {
+					phrases[i].addEventListener("click", clickgo, false);
+				}
+			}
+
+		};
+	</script>
+
+</body>
+
+</html>

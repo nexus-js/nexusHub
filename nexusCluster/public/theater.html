@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Causeway | Theater</title>
+	<link rel="stylesheet" href="styles/theater.css">
+	<link href="http://fonts.googleapis.com/css?family=Vollkorn" rel="stylesheet" type="text/css">
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+
+	<div class="url">emdm.io</div>
+
+	<div class="sec sw">
+		<h1>Causeway</h1>
+		<p>Words | <strong>Vincent A. Cellucci</strong></p>
+		<p>Audio | <strong>Jesse Allison</strong></p>
+		<p>Visuals | <strong>Derick Ostrenko</strong></p>
+		<br>
+		<p><em>Tapping is the new snapping. Take your phones off silent, turn up the volume, and navigate to the URL below:</em></p>
+		<h2>http://emdm.io</h2>
+		<br />
+		<p>If you need WiFi use...
+			<br> Network: eduroam
+			<br> Username: digitalart@lsu.edu
+			<br> Password: Digital328Art</p>
+		<p>or Griffith Public Wifi
+			<br> Username: NIME2016@guest.griffith.edu.au
+			<br> Password: V1k1ng$</p>
+	</div>
+
+	<div id="causeway-text"></div>
+
+	<div class="sec se">
+
+	</div>
+
+	<script>
+		var socket = io.connect(window.location.origin, {
+			transports: ['websocket']
+		});
+		// var socket = io.connect('130.39.92.112:8000/');
+		// 	var socket = io.connect('https://atlab.cct.lsu.edu/', { path: '/causeway/socket.io'} );
+		socket.emit('addme', {
+			name: "theater"
+		});
+
+		socket.on('chat', function(data) {
+			console.log("chat:", data);
+		});
+
+		socket.on('itemback', function(data) {
+			console.log("itemback: " + data.phrase);
+			var elements = document.getElementsByClassName(data.phrase);
+			elements[0].className += " clicked";
+
+			var style = window.getComputedStyle(elements[0], null);
+			var filter = style.webkitFilter.substr(5, 1);
+			var mf = filter - 1;
+			// console.log("filter", filter, mf, style.webkitFilter);
+			elements[0].style.webkitFilter = "blur(" + mf + "px)";
+			elements[0].style.borderColor = data.color;
+			// }
+		});
+
+		socket.on('setSection', function(data) {
+			console.log("the section is now: " + data.sect + ":" + data.title);
+
+			if (data.title == "Welcome") {
+				scrollto(data.sect);
+			}
+
+			if (data.title !== undefined) {
+
+				var otherClasses = document.querySelectorAll('.sec'),
+					i = 0,
+					l = otherClasses.length;
+
+				for (i; i < l; i++) {
+					otherClasses[i].style.display = 'none';
+				}
+
+				try {
+					document.getElementsByClassName("s" + data.sect)[0].style.display = 'block';
+					scrollto(data.sect);
+				} catch (err) {
+					console.log(err.message);
+				}
+
+			}
+		});
+
+		window.onload = function() {
+			// add a getsection
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'data/causeway.html', true);
+			xhr.onreadystatechange = function() {
+				if (this.readyState !== 4) return;
+				if (this.status !== 200) return; // or whatever error handling you want
+				document.getElementById("causeway-text").innerHTML = this.responseText;
+			};
+			xhr.send();
+		};
+
+		function scrollto(element) {
+			console.log("scrolling to:" + element);
+			var ele = document.getElementsByClassName("s" + element)[0];
+			if (ele) {
+				window.scrollTo(0, ele.offsetTop);
+			}
+		}
+
+		// function scrollto(element) {
+		// 		var ele = document.getElementsByClassName("s"+element)[0];
+
+		// 	    if (!!ele && ele.offsetTop > window.scrollY) {
+		// 		    var scrollInterval1 = setInterval(function(){
+		// 		    	console.log('scrolling!');
+		// 		        if(ele.offsetTop > window.scrollY+3) {
+		// 		            window.scrollBy( 0, 12 );
+		// 		        } else {
+		// 		        	clearInterval(scrollInterval1);
+		// 		        }
+
+		// 		    },15);
+		// 		}
+
+		// 		if (!!ele && ele.offsetTop < window.scrollY) {
+		// 		    var scrollInterval2 = setInterval(function(){
+		// 		    	console.log('scrolling!');
+		// 		        if(ele.offsetTop < window.scrollY-3) {
+		// 		            window.scrollBy( 0, -12 );
+		// 		        } else {
+		// 		        	clearInterval(scrollInterval2);
+		// 		        }
+
+		// 		    },15);
+		// 		}
+		// 	}
+	</script>
+
+	<video autoplay muted loop id="bgvid">
+		<source src="data/therm.mp4" type="video/mp4">
+	</video>
+
+</body>
+
+</html>
