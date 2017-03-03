@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>hubMusic</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Jesse Allison">
+	<!-- Date: 2017-03-02 -->
+	
+	
+	<script type="text/javascript" src="js/Tone.min.js"></script>
+	<script type="text/javascript" src="../dist/Muzak.js"></script>
+	
+	<script>
+	var music = require('music');
+	var synth = new Tone.FMSynth().toMaster()
+
+	//schedule a series of notes to play as soon as the page loads
+	// synth.triggerAttackRelease('C4', '4n', '8n')
+	// synth.triggerAttackRelease('E4', '8n', '4n + 8n')
+	// synth.triggerAttackRelease('G4', '16n', '2n')
+	// synth.triggerAttackRelease('B4', '16n', '2n + 8t')
+	// synth.triggerAttackRelease('G4', '16','2n + 8t * 2')
+	// synth.triggerAttackRelease('E4', '2n', '0:3')
+	
+	music.playMotive(synth, "4m");
+	
+	var part = new Tone.Part(function(time, value){
+		//the value is an object which contains both the note and the velocity
+		synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
+	}, [{"time" : 0, "note" : "C3", "velocity": 0.9}, 
+		   {"time" : "0:2", "note" : "C4", "velocity": 0.5}
+	]).start("+1");
+	
+	part.loop = 3
+	part.loopEnd = '1m'
+	
+	Tone.Transport.start();
+	</script>
+	
+	
+	
+	
+	
+</head>
+<body>
+	
+
+</body>
+</html>
