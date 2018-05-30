@@ -4,6 +4,12 @@
 
 ## Introduction
 
+### My life before Docker
+
+It is easier to understand what Docker is if you can see what problems it is solving. When I first started developing networking music applications I was using an Amazon EC2 server. I had to install all the dependencies needed for the application on the server in addition to my local versions. This quickly becomes an issue trying to maintain two versions of an application on two machines with two separate operating systems.
+
+A solution to this is Docker. With Docker we can recreate the conditions of the server on our local machine as an image then push and run that image in the cloud.
+
 ### docker docs
 
 * [Get Started](https://docs.docker.com/get-started/#docker-concepts)

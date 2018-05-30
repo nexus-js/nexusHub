@@ -6,9 +6,10 @@ Docker makes deployment much easier but now does not require it
 
 * hyper.sh
   * [Hyper.sh - On-demand Container, Per-Second Billing](https://hyper.sh/)
-  * only runs docker containers \* show deployment of dice game if you have time
+  * only for Docker deployments
 * now.sh
   * [Now – Realtime Global Deployments](https://zeit.co/now)
+  * Docker and node
 
 ### More control - higher barrier to entry
 
