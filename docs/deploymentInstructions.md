@@ -1,6 +1,6 @@
-# Deploy a dockerized distributed smartphone speaker composition using hyper.sh
+# Deploy a Dockerized distributed smartphone speaker composition using Hyper.sh
 
-In this workshop we will deploy a networked dice game to the internet using hyper.sh.
+In this workshop we will deploy a networked dice game to the internet using Hyper.sh.
 
 ## Installation and Setup
 
@@ -18,9 +18,9 @@ node -v
 
 ### Docker
 
-Download and install [Docker Community Edition](https://docs.docker.com/install/) for your system. This allows you to create local Docker containers and also to push them to [DockerHub](https://docs.docker.com/docker-hub/), a cloud based registry service for Docker.
+Download and install [Docker Community Edition](https://docs.docker.com/install/). This allows you to create a Docker image and container.
 
-Create a Docker ID. This gives you access to DockerHub, which we will use to deploy our app.
+Create a Docker ID. This gives you access to DockerHub, a cloud-based image registry service, which we will use to deploy our app.
 
 After Docker CE is installed sign in to Docker Cloud on your local system to allow for pushing repositories. On a Mac sign in can be found by clicking on the Docker icon in the menu bar.
 
@@ -32,7 +32,7 @@ docker version
 
 ### Hyper.sh
 
-Sign up for an account on hyper.sh. You get 2 months of limited service for free after adding a credit card.
+Sign up for an account on Hyper.sh. You get 2 months of limited service for free after adding a credit card.
 
 Follow the instructions to generate an [API credential](https://docs.hyper.sh/hyper/GettingStarted/generate_api_credential.html). Then install the [CLI](https://docs.hyper.sh/hyper/GettingStarted/install.html) and configure with your API credentials.
 
@@ -51,11 +51,11 @@ NOTE: this section will change when i get jesse's app
 
 ## Dockerizing our composition
 
-It is important that before this step docker is installed, running, and that you are signed in with your Docker ID.
+It is important that before this step Docker is installed, running, and that you are signed in with your Docker ID.
 
 ### Creating a Docker Image
 
-A Dockerfile is a configuration file for Docker that instruct Docker how to build an image. Add the following to a file named `Dockerfile`:
+A Dockerfile is a configuration file for Docker that instructs Docker how to build an image. Add the following to a file named `Dockerfile`:
 
 ```bash
 #Create our image from Node 6.9-alpine
@@ -91,7 +91,7 @@ EXPOSE 9001:9000/UDP
 CMD ["npm", "start"]
 ```
 
-With that the `Dockerfile` now in your root directory run we will build the image locally and also add a tag for uploading to DockerHub in the next step. The tag naming convention is `{dockerHub username}/{dockerhub repository name}`. In further examples replace my tag with yours.
+With the the `Dockerfile` now in your root directory run we will build the image locally and also add a tag for uploading to DockerHub in the next step. The tag naming convention is `{dockerHub username}/{dockerhub repository name}`. In further examples replace my tag with yours.
 
 ```
 docker build . -t tatecarson/dice-game
@@ -99,7 +99,11 @@ docker build . -t tatecarson/dice-game
 
 ### Run locally
 
-Explain how to test locally inside docker container here
+Now run your container locally to see that it works. Map the container port to your machines port with `p`.
+
+```
+docker run -p 8000:8000 tatecarson/dice-game
+```
 
 ## Deploy
 
@@ -113,15 +117,15 @@ docker push tatecarson/dice-game
 
 ### Hyper
 
-Now we can run a few commands to get our app running on hyper. You will notice that the commands are similar to GitHub's, making them easier to remember.
+Now we can run a few commands to get our app running on Hyper. You will notice that the commands are similar to GitHub's, making them easier to remember.
 
-First we pull from DockerHub to hyper:
+First we pull from DockerHub to Hyper:
 
 ```
 hyper pull tatecarson/dice-game
 ```
 
-Run the container on hyper. Below we run in detached mode, name our app on hyper and explicitly publish ports then tell hyper we want ot run the app we just pulled.
+Run the container on Hyper. Below we run in detached mode, name our app on Hyper and explicitly publish ports then tell Hyper we want ot run the app we just pulled.
 
 ```
 hyper run -d --name dice-game -p 8000:8000 tatecarson/dice-game
