@@ -20,7 +20,7 @@ node -v
 
 Download and install [Docker Community Edition](https://docs.docker.com/install/). This allows you to create a Docker image and container.
 
-Create a Docker ID. This gives you access to DockerHub, a cloud-based image registry service, which we will use to deploy our app.
+Open the Docker application then create a Docker ID. This gives you access to DockerHub, a cloud-based image registry service, which we will use to deploy our app.
 
 After Docker CE is installed sign in to Docker Cloud on your local system to allow for pushing repositories. On a Mac sign in can be found by clicking on the Docker icon in the menu bar.
 
@@ -91,7 +91,7 @@ EXPOSE 9001:9000/UDP
 CMD ["npm", "start"]
 ```
 
-With the the `Dockerfile` now in your root directory run we will build the image locally and also add a tag for uploading to DockerHub in the next step. The tag naming convention is `{dockerHub username}/{dockerhub repository name}`. In further examples replace my tag with yours.
+With the the `Dockerfile` now in your root directory we will build the image locally and also add a tag for uploading to DockerHub in the next step. The tag naming convention is `{dockerHub username}/{dockerhub repository name}`. In further examples replace my tag with yours.
 
 ```
 docker build . -t tatecarson/dice-game
@@ -99,7 +99,7 @@ docker build . -t tatecarson/dice-game
 
 ### Run locally
 
-Now run your container locally to see that it works. Map the container port to your machines port with `p`.
+Now run your container locally to see that it works. Map the container port to your machines port with `-p`.
 
 ```
 docker run -p 8000:8000 tatecarson/dice-game
@@ -163,7 +163,7 @@ Remove the image associated with the container
 hyper rmi tatecarson/dice-game
 ```
 
-I have collected all of the previous commands in a bash script to deploy with one command.
+I have collected all of the previous commands in a bash script to simplify deployment and cleanup.
 
 #### Deploy
 
