@@ -13,7 +13,5 @@ There are many different ways of deploying Docker images. They range in ease of 
 
 ### More control - higher barrier to entry
 
-* Google Cloud
-  * [Google Kubernetes Engine  |  Google Cloud](https://cloud.google.com/kubernetes-engine/)
-* AWS
-  * [Amazon ECS - run containerized applications in production](https://aws.amazon.com/ecs/)
+* [Google Cloud](https://cloud.google.com/kubernetes-engine/)
+* [Amazon ECS](https://aws.amazon.com/ecs/)
