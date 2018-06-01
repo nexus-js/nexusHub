@@ -1,6 +1,6 @@
 # Docker deployment
 
-Docker makes deployment much easier but now does not require it
+There are many different ways of deploying Docker images. They range in ease of use and amounts of control given to the deployment parameters.
 
 ### Less control - faster
 
