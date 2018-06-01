@@ -15,7 +15,7 @@ var Music = function() {
 	this.motive = {
 		notes: ["C4","D4","E4","G4","G4"],
 		durations: ['8n','8n','4n','8n','4n'],
-		times: ['8n','8n','4n','8n','4n']
+		times: ['8n','8n','4n','2n','4n']
 	};
 	//		times: ['8n','8n','4n','8n','4n']
 	this.init();
