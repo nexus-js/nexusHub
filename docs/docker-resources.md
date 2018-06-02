@@ -6,7 +6,7 @@
 
 ### My life before Docker
 
-It is easier to understand what Docker is if you can see what problems it is solving. When I first started developing networking music applications I was using an Amazon EC2 server. I had to install all the dependencies needed for the application on the server in addition to my local versions. This quickly becomes an issue trying to maintain two versions of an application on two machines with two separate operating systems.
+It is easier to understand what Docker if you look at it as a solution to a problem. When I first started developing networked music applications I was using an Amazon EC2 server. After developing locally I would install all the dependencies needed for the application on the server. It quickly becomes difficult to maintain two versions of an application on two machines with two separate operating systems.
 
 A solution to this is Docker. With Docker we can recreate the conditions of the server on our local machine as an image then push and run that image in the cloud.
 
@@ -39,7 +39,9 @@ A container runs natively on Linux and shares the kernel of the host machine wit
 
 By contrast, a virtual machine (VM) runs a full-blown “guest” operating system with virtual access to host resources through a hypervisor. In general, VMs provide an environment with more resources than most applications need.
 
-### Dive into docker
+### Video resources
+
+#### Dive into Docker
 
 * [Docker’s Biggest Wins](https://www.youtube.com/watch?v=YcqQI7jACTQ&index=2&list=PL-v3vdeWVEsXT-u0JDQZnM90feU3NE3v8)
   * Saving time and money (when running on a server)
@@ -48,19 +50,10 @@ By contrast, a virtual machine (VM) runs a full-blown “guest” operating syst
   * fast container start
   * portability across machines and environments
   * if it runs on your machine it will run anywhere
-  * no issues with trying to install on a linux server that acts different than your OSX of windows machine
+  * no issues with trying to install on a linux server that acts different than your OSX or windows machine
 * [Virtual Machines vs Docker Containers - Dive Into Docker - YouTube](https://www.youtube.com/watch?v=TvnZTi_gaNc&index=5&list=PL-v3vdeWVEsXT-u0JDQZnM90feU3NE3v8)
-  * docker containers
 * [Visualizing Docker’s Architecture - Dive Into Docker - YouTube](https://www.youtube.com/watch?v=IxzwNa-xuIo&list=PL-v3vdeWVEsXT-u0JDQZnM90feU3NE3v8&index=7)
-  * client
-  * where docker commands are run
-  * docker host
-  * runs docker daemon
-  * docker registry
-  * like github for docker
-  * hosts references to docker containers
-  * https://hub.docker.com/
 
 ### Docker 101 - Introduction to docker
 
-* [Docker 101](https://www.youtube.com/watch?v=z_ace9c97PE)
+[Docker 101](https://www.youtube.com/watch?v=z_ace9c97PE)
