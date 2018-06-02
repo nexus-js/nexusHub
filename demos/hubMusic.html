@@ -6,16 +6,17 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>hubMusic</title>
-    <meta name="generator" content="TextMate http://macromates.com/">
     <meta name="author" content="Jesse Allison">
     <!-- Date: 2017-03-02 -->
 
 
     <script type="text/javascript" src="js/Tone.min.js"></script>
-    <script type="text/javascript" src="../dist/Muzak.js"></script>
+    <script type="text/javascript" src="../dist/music.js"></script>
 
     <script>
-        var music = require('music');
+        var myMusic = require('music');
+        var music = new myMusic();
+
         var synth = new Tone.FMSynth().toMaster()
 
         //schedule a series of notes to play as soon as the page loads
@@ -26,7 +27,7 @@
         // synth.triggerAttackRelease('G4', '16','2n + 8t * 2')
         // synth.triggerAttackRelease('E4', '2n', '0:3')
 
-        music.playMotive(synth, "4m");
+        music.playMotive(synth, "1m");
 
         music.motive = {
             notes: ["A4", "G4", "F#4", "G4", "C4"],
