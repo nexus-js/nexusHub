@@ -16,7 +16,7 @@ var Hub = function() {
 
     this.user = new User();
 
-
+    this.sends = {};
     this.socket;
 
     // this.init();  // FIXME: implicit init or wait to ensure socket.io and other things load?
@@ -31,10 +31,12 @@ Hub.prototype.registerWithServer = function() {
         note: this.user.pitch,
         location: this.user.location
     });
-    demoSound.triggerPitch();
+
+    // FIXME: move default overlay into Hub
     document.getElementsByClassName("sd")[0].style.display = 'none';
     document.getElementsByClassName("st")[0].style.display = 'block';
-}
+};
+
 Hub.prototype.log = function(l) {
     console.log('Hub Log: ' + l);
 };
@@ -44,8 +46,42 @@ Hub.prototype.init = function() {
         transports: ['websocket']
     });
     console.log("Hub Helper Initialized!");
-}
+};
 
+Hub.prototype.channel = function(oscMessage, nickname, sendTypeArray, callback) {
+    console.log('channel nickname: ' + nickname);
+    if (!nickname) {
+        nickname = oscMessage;
+    }
+    console.log('channel nickname: ' + nickname);
+
+    this.sends[nickname] = { 'chan': oscMessage, 'sendTypes': sendTypeArray };
+    console.log("channel callback", callback);
+    if (callback) {
+        console.log("Callback Creating socket.on!")
+        this.socket.on(oscMessage, callback);
+    }
+
+};
+
+// hub.channel('item', 'item', ['audio', 'display'], function(data) {
+// 	console.log("Received item: " + data);
+// });
+
+Hub.prototype.send = function(chan, data) {
+    var channel = this.sends[chan].chan;
+    data['sendTypes'] = this.sends[chan].sendTypes;
+    console.log('send Data ', data);
+
+    this.socket.emit(channel, data);
+};
+// // FIXME: Which pattern is better?
+// hub.send.item({
+// 	item: numClicked
+// });
+// hub.send('item', {
+// 	item: numClicked
+// });
 
 
 var User = function() {

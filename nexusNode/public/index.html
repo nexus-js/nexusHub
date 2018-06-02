@@ -41,6 +41,7 @@
                 <br><em>Thanks for tapping!<br>
 				Please wait while more users connect.<br>
 				Tap the title above to test your audio.</em>
+                <button onClick="tapButton()">Tap Here</button>
             </p>
 
         </div>
@@ -96,6 +97,7 @@
             demoSound.triggerPitch();
             hub.registerWithServer();
 
+            demoSound.loadSection(31);
         }
 
         hub.socket.on('chat', function(data) {
@@ -115,60 +117,76 @@
                 demoSound.playBrought();
             }
 
-            if (data.title !== undefined) {
-                var otherClasses = document.querySelectorAll('.sec');
+            // if (data.title !== undefined) {
+            //     var otherClasses = document.querySelectorAll('.sec');
 
-                for (var i = 0; i < otherClasses.length; i++) {
-                    otherClasses[i].style.display = 'none';
-                }
+            //     for (var i = 0; i < otherClasses.length; i++) {
+            //         otherClasses[i].style.display = 'none';
+            //     }
 
-                document.getElementsByClassName("s" + data.sect)[0].style.display = 'block';
-            }
+            //     document.getElementsByClassName("s" + data.sect)[0].style.display = 'block';
+            // }
 
         });
 
-        function scrollto(element) {
-            var ele = document.getElementsByClassName("s" + element)[0];
-            if (ele) {
-                window.scrollTo(0, ele.offsetTop);
-            }
-        }
-
-        hub.socket.on('itemback', function(data) {
-            console.log("itemback: " + data.phrase);
-
-            var elements = document.getElementsByClassName(data.phrase);
-            elements[0].className += " clicked";
+        // function scrollto(element) {
+        //     var ele = document.getElementsByClassName("s" + element)[0];
+        //     if (ele) {
+        //         window.scrollTo(0, ele.offsetTop);
+        //     }
+        // }
+        hub.channel('itemback', null, [], function(data) {
+            console.log("itemback: ", data);
         });
 
-        function clickgo() {
-            var elements = document.getElementsByClassName(this.className);
-            var numClicked = elements[0].className.split(" ")[1];
-            hub.socket.emit('item', numClicked);
-            elements[0].className += " clicked";
-            elements[0].style.backgroundColor = hub.user.color;
-            demoSound.playSection(numClicked);
+        var numClicked = 0;
+
+        // .channel(osc, nickname, send type array, receive e.g. callback function)
+        // hub.channel('item', 'item', ['audio', 'display'], function(data) {
+        //     console.log("Received item: " + data);
+        // });
+        hub.channel('item', 'item', ['audio', 'display'])
+
+
+        function tapButton() {
+            console.log("numClicked = " + numClicked);
+            // hub.socket.emit('item', numClicked);
+            hub.send('item', {
+                "item": numClicked
+            });
+            // demoSound.playSection(numClicked);
+            demoSound.playCollide();
+            numClicked++
         }
 
-        window.onload = function() {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'data/causeway.html', true);
-            xhr.onreadystatechange = function() {
-                if (this.readyState !== 4) return;
-                if (this.status !== 200) return;
-                document.getElementById("causeway-text").innerHTML = this.responseText;
-                addEvents();
-            };
-            xhr.send();
+        // function clickgo() {
+        //     var elements = document.getElementsByClassName(this.className);
+        //     var numClicked = elements[0].className.split(" ")[1];
+        //     hub.socket.emit('item', numClicked);
+        //     elements[0].className += " clicked";
+        //     elements[0].style.backgroundColor = hub.user.color;
+        //     demoSound.playSection(numClicked);
+        // }
 
-            function addEvents() {
-                var phrases = document.getElementsByClassName('phrase');
-                for (var i = 0; i < phrases.length; i++) {
-                    phrases[i].addEventListener("click", clickgo, false);
-                }
-            }
+        // window.onload = function() {
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open('GET', 'data/causeway.html', true);
+        //     xhr.onreadystatechange = function() {
+        //         if (this.readyState !== 4) return;
+        //         if (this.status !== 200) return;
+        //         document.getElementById("causeway-text").innerHTML = this.responseText;
+        //         addEvents();
+        //     };
+        //     xhr.send();
 
-        };
+        //     function addEvents() {
+        //         var phrases = document.getElementsByClassName('phrase');
+        //         for (var i = 0; i < phrases.length; i++) {
+        //             phrases[i].addEventListener("click", clickgo, false);
+        //         }
+        //     }
+
+        // };
 
         function getRandomColor() {
             var letters = '0123456789ABCDEF'.split('');
@@ -229,47 +247,6 @@
         var DemoSound = function() {
 
             this.sectionStartDict = {
-                "0": [0.0, 747.414978, 1066.961426, 1830.612305, 2697.165527, 2945.147461, 3470.499023, 4369.569336, 5268.639648, 6043.129395, 6802.267578, 8031.700684, 9114.920898, 10322.698242],
-                "1": [0.0, 1518.888916, 2206.711914, 2894.557861, 3474.081543, 4459.795898, 6425.827637, 7184.081543, 8104.807129, 8921.24707, 9988.208984, 11298.888672, 12604.149414, 14201.881836, 15740.044922, 17007.392578, 18643.039062, 19617.935547,
-                    20831.132812, 21757.279297, 22807.982422, 24893.173828, 25591.859375, 26837.550781, 28435.283203, 29951.791016, 31452.041016, 32556.916016
-                ],
-                "2": [0.0, 888.253967, 2041.88208, 2875.963867, 4121.655273, 5004.467285, 5659.818848, 7257.55127, 7923.71875, 8646.167969, 9377.34668, 10479.931641, 11319.433594, 11893.537109, 12841.337891, 13350.454102, 14168.276367, 15316.485352],
-                "3": [0.0, 1121.133789, 2529.319824, 3249.659912, 4701.15625, 5919.773438, 7880.408203, 8746.984375, 10198.480469, 11633.741211, 12456.984375, 13881.40625, 14720.884766, 15311.224609, 16275.283203, 17331.427734, 18582.539062, 19882.404297,
-                    20813.96875, 21295.986328, 22704.171875, 24204.421875, 25742.583984
-                ],
-                "4": [0.0, 763.650818, 1446.077148, 2334.30835, 3141.29248, 4175.759766, 4583.832031, 5369.161133, 5764.535156, 7096.893555, 8196.349609, 9106.258789, 9929.500977, 11023.537109, 12166.326172, 13682.811523, 15589.251953, 16201.269531,
-                    17761.087891, 18763.060547, 19960.0
-                ],
-                "5": [0.0, 1871.111084, 3317.188232, 4422.063477, 6003.560059, 7400.907227, 10406.825195, 11295.079102, 13418.163086, 15259.637695],
-                "6": [0.0, 709.50116, 1879.36499, 3731.655273, 4457.415039],
-                "7": [0.0, 1191.519287, 2913.80957, 4565.714355, 6147.210938, 8205.306641, 10550.476562, 11552.449219, 13448.072266, 13859.705078, 16064.036133, 19026.621094, 20196.507812, 22563.333984, 23695.283203, 25699.228516, 27952.3125, 28905.533203],
-                "8": [0.0, 1343.174561, 3103.401367, 4977.369629, 6862.154297, 9337.301758, 11541.655273, 14682.993164, 16351.133789, 18674.625, 21171.427734, 23478.685547, 25260.589844, 26631.066406, 29024.966797],
-                "9": [0.0, 2215.170166, 4755.306152, 6661.768555, 9543.128906, 11281.677734, 13269.365234, 14986.258789, 17190.613281],
-                "10": [0.0, 993.061218, 2347.074707, 4719.319824, 6734.104004, 8402.245117, 10503.672852],
-                "11": [0.0, 1700.634888, 2800.113281, 4408.68457, 5481.065918, 7219.637207, 8898.617188, 9711.020508, 11265.442383, 13020.249023, 14027.641602, 15587.459961, 17797.210938],
-                "12": [0.0, 1960.612305, 3092.584961, 5107.369629, 7539.183594, 9191.087891, 10474.693359, 11530.838867, 13220.634766, 13957.210938, 15186.666992, 17412.675781],
-                "13": [0.0, 834.081604, 3233.401367, 5865.623535, 7842.494141, 9841.020508, 11205.873047, 12738.617188, 14726.326172, 15782.47168, 16833.333984, 17927.392578, 19010.589844, 20640.816406, 23050.974609, 25076.576172, 26587.664062, 27530.068359,
-                    28575.375
-                ],
-                "14": [0.0, 1938.956909, 3412.131348, 4376.19043, 6867.57373, 8952.766602],
-                "15": [0.0, 1901.043091, 2550.975098],
-                "16": [0.0, 1624.807251, 3292.970459, 5307.732422, 7349.591797, 8784.830078, 9624.331055, 10680.453125, 11509.115234, 12765.646484, 13924.693359, 15370.770508, 16849.341797],
-                "17": [0.0, 2280.158691, 3493.355957, 4641.564453, 5860.181641, 7170.861816, 8416.553711, 9765.147461, 10631.723633, 12695.238281, 13150.181641, 13854.262695, 15646.984375, 17358.457031, 19004.943359, 20299.386719, 21734.648438],
-                "18": [0.0, 2415.555664, 4154.104492, 5583.945801, 8698.186523, 10496.327148, 12419.025391, 13735.125, 15473.673828, 16919.773438, 18495.849609, 20147.732422, 22357.482422, 23895.646484, 24892.199219, 25872.494141, 27069.455078],
-                "19": [0.0, 1218.594116, 3325.464844, 4397.845703, 5313.152344, 6082.222656, 8021.179199, 10063.039062],
-                "20": [0.0, 823.242615, 1597.732422, 3466.258545, 4549.478516, 5990.13623, 7977.845703, 9678.480469, 10691.292969, 11601.202148, 12364.875, 13513.083984, 14336.326172],
-                "21": [0.0, 1613.990967, 3054.648438, 4457.415039, 6190.566895, 7495.850586, 9142.335938, 11048.797852, 12386.576172, 13507.709961, 14753.401367],
-                "22": [0.0, 991.133789, 2182.653076, 3292.947754, 4132.42627, 5313.129395],
-                "23": [0.0, 1229.433105, 3195.464844, 4354.512695, 5437.732422, 6775.510254, 8113.288086, 8806.553711, 10052.245117, 11357.505859, 12798.163086, 14190.09082, 16567.732422, 18290.044922, 19362.425781, 20895.169922],
-                "24": [0.0, 1651.904785, 2713.446777, 3450.022705, 4484.489746, 5470.204102, 6520.907227, 7609.523926, 9461.814453, 10723.764648],
-                "25": [0.0, 1424.444458, 2550.997803, 3401.315186, 4229.977539, 6103.922852, 7550.0, 9163.991211, 10523.423828, 11519.977539, 12890.226562, 14060.09082, 16583.990234, 19237.845703, 21100.974609, 23142.833984, 25390.521484, 26630.816406,
-                    27838.59375
-                ],
-                "26": [0.0, 1960.612305, 3520.430908, 4977.369629, 7122.131836, 8541.133789, 10702.154297, 11807.029297, 12873.991211, 13756.802734],
-                "27": [0.0, 1938.956909, 2875.940918, 5432.312988, 6623.832031, 7555.396973],
-                "28": [0.0, 1240.272095, 2702.630371],
-                "29": [0.0, 2204.35376, 3688.367188, 5112.789062, 6374.739258, 7290.067871, 8844.489258, 10101.020508, 11790.838867],
-                "30": [0.0, 2393.900146, 3877.891113, 5150.657715, 6677.981934, 7593.288086, 8476.12207, 9126.054688, 10734.625977, 12424.421875],
                 "31": [0.0, 1608.571411, 2962.584961, 3829.160889, 4955.691406, 6445.102051, 8384.058594, 9884.308594, 11281.655273, 13193.514648, 13962.584961, 14774.988281, 15435.759766, 16036.938477, 16952.244141, 17623.832031, 18268.34375, 18945.351562,
                     19795.667969, 20808.457031, 21880.839844, 22628.253906, 23413.582031, 24161.019531, 24848.865234, 25980.839844, 26533.265625, 26977.392578, 27475.667969, 27979.365234, 29728.751953, 30346.167969, 30990.679688, 31613.537109, 32252.630859,
                     32870.066406, 33400.839844, 34099.5, 35166.484375, 35599.75, 36081.769531, 36720.863281, 37560.363281, 38437.753906, 39260.996094, 39965.078125, 40810.0, 42207.347656, 43225.554688, 45072.425781, 46144.808594, 48257.074219, 49497.347656,
@@ -281,13 +258,11 @@
                     114565.921875, 115275.421875, 115844.125, 116499.453125, 117073.5625, 117869.726562, 118660.476562, 119722.015625, 120783.585938, 121915.53125, 122435.460938, 123166.640625, 124276.9375, 124878.117188, 126389.203125, 127553.648438,
                     128701.859375
                 ],
-                "32": [0.0, 2599.705322, 4771.541992, 7571.655273],
-                "33": [0.0, 3282.131592, 4619.886719, 5724.761719, 7555.396973, 9136.893555, 10366.349609, 11666.212891, 12938.979492, 14179.274414, 15636.212891, 17298.957031, 17948.867188, 18815.441406, 20061.134766],
                 "w": [0.0, 747.414978],
                 "e": [0.0, 747.414978]
             };
 
-            this.sectionStarts = this.sectionStartDict[0];
+            this.sectionStarts = this.sectionStartDict[31];
 
             this.tone = new Tone();
 
@@ -313,34 +288,11 @@
 
             this.synth.volume.value = -10;
 
-            // 		this.plucky = new Tone.PluckSynth().toMaster();
-            // 		this.plucky.volume.value = -10;
-            //
-            // 		this.seq = new Tone.Sequence(function(time, note) {
-            // 			// console.log(note, time);
-            // 			//subdivisions are given as subarrays
-            // 			this.plucky.triggerAttackRelease(note, '8n');
-            // 		}, ["C4", ["E4", "D4"], "E4", ["G4", "A4", "G4"]], '8n');
-
-            //			this.seq.loop = 4;
-
             this.playerCauseway = new Tone.Player("data/mp3s/001-Causeway.mp3").toMaster();
             this.playerSection = new Tone.Player("data/Causeway_Sections/causeway_section_audio_w.mp3").toMaster();
             this.playerSection.retrigger = true;
 
-            this.playerKepler = new Tone.Player("data/mp3s/Kepler_Star.mp3").toMaster();
-            this.playerKepler.retrigger = true;
-            this.playerEnding = new Tone.Player("data/mp3s/528-I am here.mp3").toMaster();
-
-            this.playerBBCollapse = new Tone.Player("data/mp3s/BBCollapse.mp3").toMaster();
-            this.playerSmolder = new Tone.Player("data/mp3s/Smolder.mp3").toMaster();
-            this.playerWhoBrought = new Tone.Player("data/mp3s/WhoBrought.mp3").toMaster();
             this.playerCollide = new Tone.Player("data/mp3s/Collide.mp3").toMaster();
-            this.playerCricket = new Tone.Player("data/mp3s/Cricket.mp3").toMaster();
-            this.playerSequins = new Tone.Player("data/mp3s/Sequins.mp3").toMaster();
-            this.playerBreath = new Tone.Player("data/mp3s/Breath.mp3").toMaster();
-            this.playerSonnet = new Tone.Player("data/mp3s/Sonnet.mp3").toMaster();
-
 
             Tone.Transport.start();
 
@@ -385,43 +337,6 @@
                 this.playerCauseway.start();
             };
 
-            this.playBrought = function() {
-                this.playerWhoBrought.start();
-            };
-
-            // **** Chords **** //
-            this.setCurrentChord = function(chord) {
-                this.currentChord = chord;
-            };
-
-            this.nextChord = function() {
-                this.currentChord = this.currentChord + 1;
-                if (this.currentChord > this.chords.length) {
-                    this.currentChord = 0;
-                }
-            };
-
-            this.randomChordNote = function() {
-                var chord = this.chords[Math.floor(Math.random() * (this.chords.length))];
-                var pitch = chord[Math.floor(Math.random() * (chord.length))];
-                return pitch;
-            };
-
-            //			this.arpeggio = function() {
-            //				var pattern = demoSound.chords[demoSound.currentChord];
-            //				var pat = new Tone.Pattern(function(time, note){
-            //				  //the order of the notes passed in depends on the pattern
-            //					var freq = Tone.Frequency(note).midiToFrequency();
-            //					demoSound.plucky.triggerAttackRelease(freq, '8n');
-            //				}, pattern, "randomOnce");
-            //
-            //				pat.interval = "8n";
-            //				pat.iterations = 4;
-            //				pat.start();
-            //			}
-
-
-
             this.triggerCauseway = function() {
                 this.playPitch();
                 this.playerCauseway.start();
@@ -452,90 +367,15 @@
 
             // ****  Events ****
 
-            this.playBBCollapse = function() {
-                this.playerBBCollapse.start();
-                var pitch = this.randomChordNote();
-                console.log("Pitch: ", pitch);
-                this.synth.triggerAttackRelease(this.freq(pitch), 5);
-            };
-
-            this.playSmolder = function() {
-                this.playerSmolder.start();
-                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-                this.synth.triggerAttackRelease(this.freq(pitch), 5);
-            };
-
-            this.playWhoBrought = function() {
-                this.playerWhoBrought.start();
-                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-                this.synth.triggerAttackRelease(this.freq(pitch), 5);
-            };
-
             this.playCollide = function() {
                 this.playerCollide.start();
                 var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
                 this.synth.triggerAttackRelease(this.freq(pitch), 5);
             };
 
-            this.playCricket = function() {
-                this.playerCricket.start();
-                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-                this.synth.triggerAttackRelease(this.freq(pitch), 5);
-            };
-
-            this.playSequins = function() {
-                this.playerSequins.start();
-                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-                this.synth.triggerAttackRelease(this.freq(pitch), 5);
-            };
-
-            this.playBreath = function() {
-                this.playerBreath.start();
-                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-                this.synth.triggerAttackRelease(this.freq(pitch), 5);
-            };
-
-            this.playSonnet = function() {
-                this.playerSonnet.start();
-                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-                this.synth.triggerAttackRelease(this.freq(pitch), 5);
-            };
-
-
-            this.playKepler = function() {
-                this.playerKepler.start();
-            };
-
             this.playEnding = function() {
                 this.playerEnding.start();
             };
-
-
-
-
-            // ****  Loop Seq
-
-            // 		this.seqStart = function(loopLength) {
-            // 			if (loopLength) {
-            // 				this.seq.loop = loopLength;
-            // 			} else {
-            // 				this.seq.loop = true;
-            // 			}
-            // 			this.seq.start();
-            // 		};
-            //
-            // 		this.seqStop = function() {
-            // 			this.seq.stop();
-            // 		};
-            //
-            // 		this.seqRandomize = function() {
-            // 			this.seq.removeAll();
-            //
-            // 			for (var i = 0; i < Math.floor(Math.random() * 16) + 2; i++) {
-            // 				this.seq.add(i, this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))]);
-            // 			}
-            // 			this.seqStart();
-            // 		};
 
         };
 
