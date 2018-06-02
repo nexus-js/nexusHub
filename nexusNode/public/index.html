@@ -21,7 +21,7 @@
 <body>
     <div class="sec sw">
 
-        <h1 onclick="causeSound.triggerCauseway();"><span class="mainTitle">nexusHub Demo</span></h1>
+        <h1 onclick="demoSound.triggerCauseway();"><span class="mainTitle">nexusHub Demo</span></h1>
 
         <div class="sd">
             <p>Demo | <strong>Jesse Allison</strong></p>
@@ -50,24 +50,24 @@
     <div id="causeway-text"></div>
 
     <div class="sec se" style="display: none;">
-        <h1 onclick="causeSound.triggerCauseway();"><span class="mainTitle">Causeway</span></h1>
+        <h1 onclick="demoSound.triggerCauseway();"><span class="mainTitle">nexusHub Demo</span></h1>
         <p>
             <br>
             <br><em>Thanks for tapping!<br>
-			Please visit <a href="http://causeway.emdm.io">causeway.emdm.io</a> for documentation.</em>
+			Please visit <a href="http://nexus.emdm.io">nexus.emdm.io</a> for documentation.</em>
         </p>
     </div>
 
     <script>
         var Hub = require('hub');
         var hub = new Hub();
+        hub.init();
+
+        hub.user.name = "a_user";
         console.log(hub.user.id);
-        var socket = io.connect(window.location.origin, {
-            transports: ['websocket']
-        });
         hub.user.color = getRandomColor();
         console.log(hub.user.color);
-        // var myLocation = [0.5, 0.5]; // Default centered
+
         hub.user.location = {
             x: 0.5,
             y: 0.5
@@ -93,38 +93,26 @@
             hub.user.location.y = my;
             console.log(hub.user.location);
 
-            registerWithServer();
+            demoSound.triggerPitch();
+            hub.registerWithServer();
+
         }
 
-        function registerWithServer() {
-            // Tone.startMobile();		// May need this back - check on devices.
-            // causeSound.triggerCauseway();
-            socket.emit('addme', {
-                name: hub.user.name,
-                color: hub.user.color,
-                note: hub.user.pitch,
-                location: hub.user.location
-            });
-            causeSound.triggerPitch();
-            document.getElementsByClassName("sd")[0].style.display = 'none';
-            document.getElementsByClassName("st")[0].style.display = 'block';
-        }
-
-        socket.on('chat', function(data) {
+        hub.socket.on('chat', function(data) {
             console.log("chat: " + data);
         });
 
-        socket.on('setSection', function(data) {
+        hub.socket.on('setSection', function(data) {
             console.log(data);
             console.log("the section is now: " + data.title);
 
             secNum = data.sect;
 
-            causeSound.loadSection(secNum);
+            demoSound.loadSection(secNum);
 
             if (data.sect == "15") {
                 // Tone.startMobile();
-                causeSound.playBrought();
+                demoSound.playBrought();
             }
 
             if (data.title !== undefined) {
@@ -146,7 +134,7 @@
             }
         }
 
-        socket.on('itemback', function(data) {
+        hub.socket.on('itemback', function(data) {
             console.log("itemback: " + data.phrase);
 
             var elements = document.getElementsByClassName(data.phrase);
@@ -156,10 +144,10 @@
         function clickgo() {
             var elements = document.getElementsByClassName(this.className);
             var numClicked = elements[0].className.split(" ")[1];
-            socket.emit('item', numClicked);
+            hub.socket.emit('item', numClicked);
             elements[0].className += " clicked";
             elements[0].style.backgroundColor = hub.user.color;
-            causeSound.playSection(numClicked);
+            demoSound.playSection(numClicked);
         }
 
         window.onload = function() {
@@ -192,53 +180,53 @@
         }
 
 
-        socket.on('triggerBeginning', function(data) {
-            causeSound.playKepler();
-            causeSound.arpeggio();
+        hub.socket.on('triggerBeginning', function(data) {
+            demoSound.playKepler();
+            demoSound.arpeggio();
         });
 
-        socket.on('nextChord', function(data) {
-            causeSound.nextChord();
+        hub.socket.on('nextChord', function(data) {
+            demoSound.nextChord();
         });
 
-        socket.on('triggerBBCollapse', function(data) {
-            causeSound.playBBCollapse();
-            // causeSound.arpeggio();
+        hub.socket.on('triggerBBCollapse', function(data) {
+            demoSound.playBBCollapse();
+            // demoSound.arpeggio();
         });
 
-        socket.on('triggerSmolder', function(data) {
-            causeSound.playSmolder();
+        hub.socket.on('triggerSmolder', function(data) {
+            demoSound.playSmolder();
         });
 
-        socket.on('triggerWhoBrought', function(data) {
-            causeSound.playWhoBrought();
+        hub.socket.on('triggerWhoBrought', function(data) {
+            demoSound.playWhoBrought();
         });
 
-        socket.on('triggerCollide', function(data) {
-            causeSound.playCollide();
+        hub.socket.on('triggerCollide', function(data) {
+            demoSound.playCollide();
         });
 
-        socket.on('triggerCricket', function(data) {
-            causeSound.playCricket();
+        hub.socket.on('triggerCricket', function(data) {
+            demoSound.playCricket();
         });
 
-        socket.on('triggerSequins', function(data) {
-            causeSound.playSequins();
+        hub.socket.on('triggerSequins', function(data) {
+            demoSound.playSequins();
         });
 
-        socket.on('triggerBreath', function(data) {
-            causeSound.playBreath();
+        hub.socket.on('triggerBreath', function(data) {
+            demoSound.playBreath();
         });
 
-        socket.on('triggerSonnet', function(data) {
-            causeSound.playSonnet();
+        hub.socket.on('triggerSonnet', function(data) {
+            demoSound.playSonnet();
         });
 
-        socket.on('triggerEnding', function(data) {
-            causeSound.playEnding();
+        hub.socket.on('triggerEnding', function(data) {
+            demoSound.playEnding();
         });
 
-        var CauseSound = function() {
+        var DemoSound = function() {
 
             this.sectionStartDict = {
                 "0": [0.0, 747.414978, 1066.961426, 1830.612305, 2697.165527, 2945.147461, 3470.499023, 4369.569336, 5268.639648, 6043.129395, 6802.267578, 8031.700684, 9114.920898, 10322.698242],
@@ -390,7 +378,7 @@
 
             this.triggerPitch = function() {
                 this.synth.triggerAttackRelease(this.freq(this.pitch), 5);
-                socket.emit('triggerPitch', this.pitch);
+                hub.socket.emit('triggerPitch', this.pitch);
             };
 
             this.playCauseway = function() {
@@ -420,11 +408,11 @@
             };
 
             //			this.arpeggio = function() {
-            //				var pattern = causeSound.chords[causeSound.currentChord];
+            //				var pattern = demoSound.chords[demoSound.currentChord];
             //				var pat = new Tone.Pattern(function(time, note){
             //				  //the order of the notes passed in depends on the pattern
             //					var freq = Tone.Frequency(note).midiToFrequency();
-            //					causeSound.plucky.triggerAttackRelease(freq, '8n');
+            //					demoSound.plucky.triggerAttackRelease(freq, '8n');
             //				}, pattern, "randomOnce");
             //
             //				pat.interval = "8n";
@@ -438,7 +426,7 @@
                 this.playPitch();
                 this.playerCauseway.start();
                 // this.seqRandomize();
-                socket.emit('triggerCauseway', causeSound.pitch);
+                hub.socket.emit('triggerCauseway', demoSound.pitch);
 
                 var elements = document.getElementsByClassName("mainTitle");
                 // elements[0].className += " clicked";
@@ -551,8 +539,8 @@
 
         };
 
-        var causeSound = new CauseSound();
-        hub.user.pitch = causeSound.pitch;
+        var demoSound = new DemoSound();
+        hub.user.pitch = demoSound.pitch;
     </script>
 
 </body>
