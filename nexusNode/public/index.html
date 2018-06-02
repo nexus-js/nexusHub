@@ -21,7 +21,7 @@
 <body>
     <div class="sec sw">
 
-        <h1 onclick="demoSound.triggerCauseway();"><span class="mainTitle">nexusHub Demo</span></h1>
+        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Demo</span></h1>
 
         <div class="sd">
             <p>Demo | <strong>Jesse Allison</strong></p>
@@ -48,10 +48,8 @@
 
     </div>
 
-    <div id="causeway-text"></div>
-
     <div class="sec se" style="display: none;">
-        <h1 onclick="demoSound.triggerCauseway();"><span class="mainTitle">nexusHub Demo</span></h1>
+        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Demo</span></h1>
         <p>
             <br>
             <br><em>Thanks for tapping!<br>
@@ -74,7 +72,6 @@
             y: 0.5
         }
         var secNum = 0;
-        var sectionBeginnings = [1, 14, 41, 58, 80, 100, 109, 113, 130, 144, 152, 158, 170, 181, 199, 204, 206, 218, 234, 250, 257, 269, 279, 284, 299, 308, 326, 335, 340, 342, 350, 359, 512, 515, 1];
 
         document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + hub.user.color;
         seatMap.addEventListener("click", getClickPosition, false);
@@ -96,8 +93,6 @@
 
             demoSound.triggerPitch();
             hub.registerWithServer();
-
-            demoSound.loadSection(31);
         }
 
         hub.socket.on('chat', function(data) {
@@ -110,83 +105,26 @@
 
             secNum = data.sect;
 
-            demoSound.loadSection(secNum);
-
-            if (data.sect == "15") {
-                // Tone.startMobile();
-                demoSound.playBrought();
-            }
-
-            // if (data.title !== undefined) {
-            //     var otherClasses = document.querySelectorAll('.sec');
-
-            //     for (var i = 0; i < otherClasses.length; i++) {
-            //         otherClasses[i].style.display = 'none';
-            //     }
-
-            //     document.getElementsByClassName("s" + data.sect)[0].style.display = 'block';
-            // }
-
         });
 
-        // function scrollto(element) {
-        //     var ele = document.getElementsByClassName("s" + element)[0];
-        //     if (ele) {
-        //         window.scrollTo(0, ele.offsetTop);
-        //     }
-        // }
         hub.channel('itemback', null, [], function(data) {
             console.log("itemback: ", data);
         });
 
         var numClicked = 0;
 
-        // .channel(osc, nickname, send type array, receive e.g. callback function)
-        // hub.channel('item', 'item', ['audio', 'display'], function(data) {
-        //     console.log("Received item: " + data);
-        // });
         hub.channel('item', 'item', ['audio', 'display'])
-
 
         function tapButton() {
             console.log("numClicked = " + numClicked);
-            // hub.socket.emit('item', numClicked);
             hub.send('item', {
                 "item": numClicked
             });
-            // demoSound.playSection(numClicked);
-            demoSound.playCollide();
+
+            demoSound.playSecondSound();
             numClicked++
         }
 
-        // function clickgo() {
-        //     var elements = document.getElementsByClassName(this.className);
-        //     var numClicked = elements[0].className.split(" ")[1];
-        //     hub.socket.emit('item', numClicked);
-        //     elements[0].className += " clicked";
-        //     elements[0].style.backgroundColor = hub.user.color;
-        //     demoSound.playSection(numClicked);
-        // }
-
-        // window.onload = function() {
-        //     var xhr = new XMLHttpRequest();
-        //     xhr.open('GET', 'data/causeway.html', true);
-        //     xhr.onreadystatechange = function() {
-        //         if (this.readyState !== 4) return;
-        //         if (this.status !== 200) return;
-        //         document.getElementById("causeway-text").innerHTML = this.responseText;
-        //         addEvents();
-        //     };
-        //     xhr.send();
-
-        //     function addEvents() {
-        //         var phrases = document.getElementsByClassName('phrase');
-        //         for (var i = 0; i < phrases.length; i++) {
-        //             phrases[i].addEventListener("click", clickgo, false);
-        //         }
-        //     }
-
-        // };
 
         function getRandomColor() {
             var letters = '0123456789ABCDEF'.split('');
@@ -198,71 +136,11 @@
         }
 
 
-        hub.socket.on('triggerBeginning', function(data) {
-            demoSound.playKepler();
-            demoSound.arpeggio();
-        });
-
-        hub.socket.on('nextChord', function(data) {
-            demoSound.nextChord();
-        });
-
-        hub.socket.on('triggerBBCollapse', function(data) {
-            demoSound.playBBCollapse();
-            // demoSound.arpeggio();
-        });
-
-        hub.socket.on('triggerSmolder', function(data) {
-            demoSound.playSmolder();
-        });
-
-        hub.socket.on('triggerWhoBrought', function(data) {
-            demoSound.playWhoBrought();
-        });
-
         hub.socket.on('triggerCollide', function(data) {
-            demoSound.playCollide();
-        });
-
-        hub.socket.on('triggerCricket', function(data) {
-            demoSound.playCricket();
-        });
-
-        hub.socket.on('triggerSequins', function(data) {
-            demoSound.playSequins();
-        });
-
-        hub.socket.on('triggerBreath', function(data) {
-            demoSound.playBreath();
-        });
-
-        hub.socket.on('triggerSonnet', function(data) {
-            demoSound.playSonnet();
-        });
-
-        hub.socket.on('triggerEnding', function(data) {
-            demoSound.playEnding();
+            demoSound.playSecondSound();
         });
 
         var DemoSound = function() {
-
-            this.sectionStartDict = {
-                "31": [0.0, 1608.571411, 2962.584961, 3829.160889, 4955.691406, 6445.102051, 8384.058594, 9884.308594, 11281.655273, 13193.514648, 13962.584961, 14774.988281, 15435.759766, 16036.938477, 16952.244141, 17623.832031, 18268.34375, 18945.351562,
-                    19795.667969, 20808.457031, 21880.839844, 22628.253906, 23413.582031, 24161.019531, 24848.865234, 25980.839844, 26533.265625, 26977.392578, 27475.667969, 27979.365234, 29728.751953, 30346.167969, 30990.679688, 31613.537109, 32252.630859,
-                    32870.066406, 33400.839844, 34099.5, 35166.484375, 35599.75, 36081.769531, 36720.863281, 37560.363281, 38437.753906, 39260.996094, 39965.078125, 40810.0, 42207.347656, 43225.554688, 45072.425781, 46144.808594, 48257.074219, 49497.347656,
-                    50071.449219, 50564.308594, 51046.347656, 51555.464844, 52053.742188, 52481.609375, 54350.160156, 55157.164062, 55790.839844, 56716.984375, 57626.894531, 58531.359375, 59143.378906, 59690.40625, 60074.941406, 60703.21875, 61428.957031,
-                    61938.070312, 63015.851562, 63882.425781, 64954.808594, 65658.914062, 66222.179688, 66758.367188, 67197.054688, 69282.21875, 69877.984375, 70587.484375, 71302.40625, 72017.320312, 72856.804688, 73517.570312, 74384.148438, 76203.945312,
-                    77086.757812, 77482.132812, 78180.796875, 79366.914062, 80043.921875, 80753.421875, 81625.421875, 82123.695312, 83136.507812, 83840.585938, 84560.929688, 85205.445312, 85649.570312, 87101.0625, 87973.039062, 88677.117188, 89505.78125,
-                    91195.601562, 91970.109375, 92928.75, 93519.09375, 94206.9375, 94856.867188, 95961.742188, 96552.085938, 97998.1875, 98507.304688, 99357.617188, 99877.570312, 101388.664062, 102461.039062, 102861.8125, 103565.921875, 104275.421875,
-                    104752.015625, 105358.640625, 106057.320312, 106972.632812, 107519.65625, 108245.421875, 108759.929688, 109323.195312, 109837.710938, 110222.265625, 110747.640625, 111289.226562, 111863.335938, 112377.84375, 113531.453125, 113948.5,
-                    114565.921875, 115275.421875, 115844.125, 116499.453125, 117073.5625, 117869.726562, 118660.476562, 119722.015625, 120783.585938, 121915.53125, 122435.460938, 123166.640625, 124276.9375, 124878.117188, 126389.203125, 127553.648438,
-                    128701.859375
-                ],
-                "w": [0.0, 747.414978],
-                "e": [0.0, 747.414978]
-            };
-
-            this.sectionStarts = this.sectionStartDict[31];
 
             this.tone = new Tone();
 
@@ -287,12 +165,9 @@
             }).connect(this.tremolo);
 
             this.synth.volume.value = -10;
-
-            this.playerCauseway = new Tone.Player("data/mp3s/001-Causeway.mp3").toMaster();
-            this.playerSection = new Tone.Player("data/Causeway_Sections/causeway_section_audio_w.mp3").toMaster();
-            this.playerSection.retrigger = true;
-
-            this.playerCollide = new Tone.Player("data/mp3s/Collide.mp3").toMaster();
+            this.player = [];
+            this.player[0] = new Tone.Player("data/mp3s/001-Causeway.mp3").toMaster();
+            this.player[1] = new Tone.Player("data/mp3s/Collide.mp3").toMaster();
 
             Tone.Transport.start();
 
@@ -300,17 +175,6 @@
 
             this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
             console.log("Pitch & Length: ", this.pitch, this.pitchCollection.length);
-
-            this.chords = [
-                [55, 59, 62, 66, 68, 71, 75, 78, 82],
-                [57, 61, 64, 67, 69, 73, 76, 80, 83],
-                [55, 57, 61, 62, 66, 67],
-                [57, 59, 62, 64, 67, 68],
-                [83, 82, 78, 76, 73, 71],
-                [82, 80, 76, 75, 71, 69]
-            ];
-
-            this.currentChord = 0;
 
             this.freq = function(midi) {
                 var note = Tone.Frequency(midi).midiToFrequency(midi);
@@ -325,7 +189,7 @@
 
             this.playRandomPitch = function() {
                 var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-                this.synth.triggerAttackRelease(this.freq(this.pitch), 5);
+                this.synth.triggerAttackRelease(this.freq(pitch), 0.5);
             };
 
             this.triggerPitch = function() {
@@ -333,48 +197,28 @@
                 hub.socket.emit('triggerPitch', this.pitch);
             };
 
-            this.playCauseway = function() {
-                this.playerCauseway.start();
+            this.playFirstSound = function() {
+                this.player[0].start();
             };
 
-            this.triggerCauseway = function() {
+            this.triggerFirstSound = function() {
                 this.playPitch();
-                this.playerCauseway.start();
+                this.player[0].start();
                 // this.seqRandomize();
-                hub.socket.emit('triggerCauseway', demoSound.pitch);
+                hub.socket.emit('triggerFirstSound', demoSound.pitch);
 
                 var elements = document.getElementsByClassName("mainTitle");
                 // elements[0].className += " clicked";
                 elements[0].style.backgroundColor = hub.user.color;
             };
 
-
-            this.loadSection = function(section) {
-                //this.playerSection = new Tone.Player("data/Causeway_Sections/causeway_section_audio_"+section+".mp3").toMaster();
-                this.playerSection.load("data/Causeway_Sections/causeway_section_audio_" + section + ".mp3", function() {
-                    console.log("Loading: " + section);
-                });
-                this.sectionStarts = this.sectionStartDict[section];
-            };
-
-            this.playSection = function(numClicked) {
-                var sfStart = (this.sectionStarts[numClicked - sectionBeginnings[secNum]] * 0.001);
-                var sfDuration = (this.sectionStarts[numClicked - sectionBeginnings[secNum] + 1] * 0.001) - sfStart;
-                console.log("Duration = " + sfDuration, "numClicked = " + numClicked, "secNum = " + secNum, "beginning = " + sectionBeginnings[secNum]);
-                this.playerSection.start(0.0, sfStart, sfDuration);
-                //this.playerSection.start();
-            };
-
             // ****  Events ****
 
-            this.playCollide = function() {
-                this.playerCollide.start();
-                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
-                this.synth.triggerAttackRelease(this.freq(pitch), 5);
-            };
-
-            this.playEnding = function() {
-                this.playerEnding.start();
+            this.playSecondSound = function() {
+                this.player[1].start();
+                // var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+                // this.synth.triggerAttackRelease(this.freq(pitch), 5);
+                this.playRandomPitch();
             };
 
         };
