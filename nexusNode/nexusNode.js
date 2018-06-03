@@ -12,9 +12,6 @@
 var NexusHub = require('../lib/hub/hub');
 var hub = new NexusHub();
 
-// var SERVER_PORT = 3000;
-
-
 // Setup web app - using express to serve pages
 var express = require('express'),
     sio = require('socket.io'),

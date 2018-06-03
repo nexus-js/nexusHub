@@ -27,21 +27,24 @@
             <p>Demo | <strong>Jesse Allison</strong></p>
             <p>Start by tapping your approximate location in the room.</p>
             <svg version="1.1" id="seatMap" x="0px" y="0px" viewbox="0 0 640 445" style="max-width: 70vh; enable-background:new 0 0 640 445;">
-				<rect x="4" y="4" style="fill:none;stroke:#B3B3B3;stroke-width:8;stroke-miterlimit:10;" width="632" height="437" />
-				<rect x="77.5" y="70" style="fill:none;stroke:#4D4D4D;stroke-width:8;stroke-miterlimit:10;" width="485.1" height="350" />
-				<line style="fill:none;stroke:#4D4D4D;stroke-width:18;stroke-miterlimit:10;" x1="30" y1="40" x2="610" y2="40" />
-			</svg>
-
+							<rect x="4" y="4" style="fill:none;stroke:#B3B3B3;stroke-width:8;stroke-miterlimit:10;" width="632" height="437" />
+							<rect x="77.5" y="70" style="fill:none;stroke:#4D4D4D;stroke-width:8;stroke-miterlimit:10;" width="485.1" height="350" />
+							<line style="fill:none;stroke:#4D4D4D;stroke-width:18;stroke-miterlimit:10;" x1="30" y1="40" x2="610" y2="40" />
+						</svg>
         </div>
 
         <div class="st" style="display: none;">
-
             <p>
                 <br>
                 <br><em>Thanks for tapping!<br>
-				Please wait while more users connect.<br>
-				Tap the title above to test your audio.</em>
+							Please wait while more users connect.<br>
+							Tap the title above to test your audio.</em>
+                <br>
                 <button onClick="tapButton()">Tap Here</button>
+                <br>
+                <button onClick="triggerOthersButton()">Tap Others</button>
+                <br>
+                <button onClick="tapEnd()">Tap To End Session</button>
             </p>
 
         </div>
@@ -63,17 +66,17 @@
         hub.init();
 
         hub.user.name = "a_user";
-        console.log(hub.user.id);
         hub.user.color = getRandomColor();
         console.log(hub.user.color);
-
         hub.user.location = {
             x: 0.5,
             y: 0.5
         }
+
         var secNum = 0;
 
         document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + hub.user.color;
+
         seatMap.addEventListener("click", getClickPosition, false);
 
         function getClickPosition(e) {
@@ -94,6 +97,7 @@
             demoSound.triggerPitch();
             hub.register();
         }
+
         hub.channel('chat', null, null, function(data) {
             console.log("chat: " + data);
         });
@@ -123,6 +127,24 @@
             demoSound.playSecondSound();
             numClicked++
         }
+
+        hub.channel('tapOthers', null, null, function(data) {
+            console.log('Other Person: ' + data.userId);
+            demoSound.playPitch(data.pitch);
+        });
+
+        function triggerOthersButton() {
+            hub.send('tapOthers', {
+                "userId": hub.user.id,
+                "pitch": hub.user.pitch
+            });
+        }
+
+        function tapEnd() {
+            document.getElementsByClassName("sw")[0].style.display = 'none';
+            document.getElementsByClassName("se")[0].style.display = 'block';
+        }
+
 
 
         function getRandomColor() {
@@ -185,8 +207,13 @@
             };
 
             // **** Playing Notes **** //
-            this.playPitch = function() {
-                this.synth.triggerAttackRelease(this.freq(this.pitch), 5);
+            this.playPitch = function(pitch) {
+                if (pitch) {
+                    this.synth.triggerAttackRelease(this.freq(pitch), 0.5);
+                } else {
+                    this.synth.triggerAttackRelease(this.freq(this.pitch), 5);
+
+                }
             };
 
             this.playRandomPitch = function() {
