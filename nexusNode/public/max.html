@@ -1,142 +1,100 @@
-<html> 
+<html>
+
 <head>
-	<meta charset="utf-8">
-	<title>Causeway</title>
-	<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta charset="utf-8">
+    <title>nexusHub Demo</title>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-	<link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/main.css">
 
-	<link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
 
-	<script src="/socket.io/socket.io.js"></script>
-	<!-- <script type="text/javascript" src="js/Tone.min.js"></script> -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/browserHub.js"></script>
+    <!-- <script type="text/javascript" src="js/Tone.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 </head>
 
 <body>
 
-	<button onclick="socket.emit('triggerBeginning')">Beginning</button>
-	<button onclick="socket.emit('nextChord')">Next Chord</button>
-	<button onclick="socket.emit('triggerBBCollapse')">bridge blessing collapse</button>
-	<button onclick="socket.emit('triggerSmolder')">still smoldering precipitation</button>
-	<button onclick="socket.emit('triggerWhoBrought')">Who has brought this one here?</button>
-	<button onclick="socket.emit('triggerCollide')">two storms collide</button>
-	<button onclick="socket.emit('triggerCricket')">that cricket never finishes</button>
-	<button onclick="socket.emit('triggerSequins')">satin sequins</button>
-	<button onclick="socket.emit('triggerBreath')">breath of the Mississippi</button>
-	<button onclick="socket.emit('triggerSonnet')">A sonnet of immolation...</button>
-	<button onclick="socket.emit('triggerEnding')">Ending</button>
+    <button onclick="socket.emit('triggerCollide')">two storms collide</button>
+
+    <script>
+        var Hub = require('hub');
+        var hub = new Hub();
+        hub.init();
+        hub.user.name = "max";
+        hub.user.pitch = 55;
+        hub.register();
+
+        var socket = io.connect(window.location.origin, {
+            transports: ['websocket']
+        });
+
+        var myColor = getRandomColor();
+        var myLocation = [0.5, 0.5]; // Default centered
+
+        socket.emit('addme', {
+            name: "audio_controller",
+            color: myColor,
+            note: 60,
+            location: myLocation
+        });
+
+        socket.on('setSection', function(data) {
+            console.log("The section is now: " + data.title);
+            window.max.outlet('section' + " " + data.title);
+        });
+
+        socket.on('triggerBeginning', function(data) {
+            window.max.outlet('playKepler');
+        });
+
+        socket.on('nextChord', function(data) {
+            window.max.outlet('nextChord');
+        });
+
+        socket.on('triggerEnding', function(data) {
+            window.max.outlet('playEnding');
+        });
+
+        socket.on('registerUser', function(data) {
+            window.max.outlet('registerUser' + " " + data.id + " " + data.color + " " + data.locationX + " " + data.locationY + " " + data.note);
+        });
+
+        socket.on('triggerCollide', function(data) {
+            window.max.outlet('triggerCollide' + " " + data.id);
+        });
 
 
-
-<script>
-
-	var socket = io.connect(window.location.origin , {transports:['websocket']} );
-
-	var myColor = getRandomColor();
-	var myLocation = [0.5, 0.5];	// Default centered
-
-	socket.emit('addme', {name: "audio_controller", color: myColor, note: 60, location: myLocation});
-
-	socket.on('setSection', function(data) {
-		console.log("The section is now: " + data.title);
-		window.max.outlet('section'+" "+ data.title);
-	});
-
-	socket.on('triggerBeginning', function(data) {
-		window.max.outlet('playKepler');
-	});
-
-	socket.on('nextChord', function(data) {
-		window.max.outlet('nextChord');
-	});
-
-	socket.on('triggerEnding', function(data) {
-		window.max.outlet('playEnding');
-	});
-
-	socket.on('/causeway/currentSection', function(data) {
-		window.max.outlet('/causeway/currentSection'+" "+ data.section+" "+ data.title);
-	});
-
-	socket.on('/causeway/triggerPitch', function(data) {
-		window.max.outlet('/causeway/triggerPitch'+" "+ data.id);
-	});
-
-	socket.on('/causeway/triggerCauseway', function(data) {
-		window.max.outlet('/causeway/triggerCauseway'+" "+ data.id);
-	});
-
-	socket.on('/causeway/phrase/number', function(data) {
-		window.max.outlet('/causeway/phrase/number'+" "+ data.id+" "+ data.item);
-	});
-
-	socket.on('/causeway/registerUser', function(data) {
-		window.max.outlet('/causeway/registerUser'+ " "+ data.id+" "+ data.color+" "+ data.locationX+" "+ data.locationY+" "+ data.note);
-	});
-
-	socket.on('/causeway/triggerBBCollapse', function(data) {
-		window.max.outlet('/causeway/triggerBBCollapse'+" "+ data.id);
-	});
-
-	socket.on('/causeway/triggerSmolder', function(data) {
-		window.max.outlet('/causeway/triggerSmolder'+" "+ data.id);
-	});
-
-	socket.on('/causeway/triggerWhoBrought', function(data) {
-		window.max.outlet('/causeway/triggerWhoBrought'+" "+ data.id);
-	});
-
-	socket.on('/causeway/triggerCollide', function(data) {
-		window.max.outlet('/causeway/triggerCollide'+" "+ data.id);
-	});
-
-	socket.on('/causeway/triggerCricket', function(data) {
-		window.max.outlet('/causeway/triggerCricket'+" "+ data.id);
-	});
-
-	socket.on('/causeway/triggerSequins', function(data) {
-		window.max.outlet('/causeway/triggerSequins'+" "+ data.id);
-	});
-
-	socket.on('/causeway/triggerBreath', function(data) {
-		window.max.outlet('/causeway/triggerBreath'+" "+ data.id);
-	});
-
-	socket.on('/causeway/triggerSonnet', function(data) {
-		window.max.outlet('/causeway/triggerSonnet'+" "+ data.id);
-	});
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
 
 
-	function getRandomColor() {
-		var letters = '0123456789ABCDEF'.split('');
-		var color = '#';
-		for (var i = 0; i < 6; i++ ) {
-		    color += letters[Math.floor(Math.random() * 16)];
-		}
-		return color;
-	}
+        document.addEventListener('DOMContentLoaded', function() {
+            window.max.outlet('DOM ready');
+            var i = 0;
+            var dictName = 'testDict';
+            var dictText = document.getElementById('dict');
 
+            window.max.bindInlet('resetCounter', function() {
+                i = 0;
+                window.max.outlet('reset');
+            });
 
-	document.addEventListener('DOMContentLoaded', function() {
-		window.max.outlet('DOM ready');
-		var i = 0;
-		var dictName = 'testDict';
-		var dictText = document.getElementById('dict');
+            document.getElementById('the_click_button').addEventListener('click', function() {
+                window.max.outlet('click', ++i);
+            });
 
-		window.max.bindInlet('resetCounter', function() {
-			i = 0;
-			window.max.outlet('reset');
-		});
-
-		document.getElementById('the_click_button').addEventListener('click', function() {
-			window.max.outlet('click', ++i);
-		});
-
-	});
-
-</script>
+        });
+    </script>
 
 </body>
 

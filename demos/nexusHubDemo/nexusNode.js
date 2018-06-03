@@ -4,7 +4,9 @@
 //				Jesse Allison (2017)
 //
 //	To Launch:
-//		NODE_ENV=production sudo node nexus-server.js
+//		npm start
+//		- or -
+//		NODE_ENV=production sudo PORT=80 node nexusNode.js
 //		(sudo is required to launch on port 80.)
 
 // ************************************************
@@ -56,12 +58,12 @@ hub.io.sockets.on('connection', function(socket) {
             console.log("Hello Controller: " + hub.controller.id);
         }
 
-        if (username == "audio_controller") {
+        if (username == "audioController") {
             hub.audio.id = socket.id;
             console.log("Hello Audio Controller: " + hub.audio.id);
         }
 
-        if (username == "max_controller") {
+        if (username == "maxController") {
             hub.audio.id = socket.id;
             console.log("Hello MaxMSP Controller: " + hub.max.id);
         }
@@ -119,6 +121,11 @@ hub.io.sockets.on('connection', function(socket) {
 
     socket.on('tapOthers', function(data) {
         socket.broadcast.emit('tapOthers', data);
+    });
+
+    socket.on('sendText', function(data) {
+        console.log('sendText: ', data);
+        socket.broadcast.emit('sendText', data);
     });
 
     socket.on('item', function(data) {

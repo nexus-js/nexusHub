@@ -1,82 +1,84 @@
 body {
-/*	display: flex;
+    /*	display: flex;
 	align-items: center;
 	justify-content: center;*/
-	font-family: 'Vollkorn', serif;
-	font-size: 1.0em;
-	/*position: fixed;*/
-	background-color: black;
-	color: rgb(150, 150, 150);
+    font-family: 'Vollkorn', serif;
+    font-size: 1.0em;
+    /*position: fixed;*/
+    background-color: black;
+    color: rgb(150, 150, 150);
 }
 
 body {
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .sw {
-	text-align: center;
+    text-align: center;
 }
 
-.sw p{
-	font-size: 1.0em
+.sw p {
+    font-size: 1.0em
 }
 
-.sw .url{
-	font-size: 1.5em
+.sw .url {
+    font-size: 1.5em
 }
 
-#causeway-text {
-	white-space: pre;
+#typed-text {
+    white-space: pre;
+    font-size: 7em;
+    justify-content: center;
 }
 
 .symbol {
-	font-size: 2.0em;
+    font-size: 2.0em;
 }
 
 .sec {
-	border: 2px solid rgb(100, 0, 0);
+    border: 2px solid rgb(100, 0, 0);
 }
 
 .sec:before {
-	/*font-size: 2em;*/
-	/*content: "-NEXT SECTION-";*/
+    /*font-size: 2em;*/
+    /*content: "-NEXT SECTION-";*/
 }
 
 .sec:hover {
-	background-color: rgb(0, 50, 0);
+    background-color: rgb(0, 50, 0);
 }
 
 .sec:active {
-	background-color: grey;
+    background-color: grey;
 }
 
 small {
-	font-size: 0.5em;
+    font-size: 0.5em;
 }
 
-a{
-	display: inline-block;
-	border: 5px solid red;
-	font-size: 2em;
-	margin: 10px;
-	color: blue;
+a {
+    display: inline-block;
+    border: 5px solid red;
+    font-size: 2em;
+    margin: 10px;
+    color: blue;
 }
 
-a:hover{
-	background-color: white;
-	color: red;
+a:hover {
+    background-color: white;
+    color: red;
 }
 
-a:active{
-	background-color: purple;
-	color: orange;
+a:active {
+    background-color: purple;
+    color: orange;
 }
 
-a:visited{
-	color: purple;
+a:visited {
+    color: purple;
 }

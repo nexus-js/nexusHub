@@ -1,10 +1,12 @@
 // ************************************************
 
 // NEXUS Hub Node Server
-//				Jesse Allison (2017)
+//				Jesse Allison (2018)
 //
 //	To Launch:
-//		NODE_ENV=production sudo node nexus-server.js
+//		npm start
+//		- or -
+//		NODE_ENV=production sudo PORT=80 node nexusNode.js
 //		(sudo is required to launch on port 80.)
 
 // ************************************************
