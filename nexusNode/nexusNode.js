@@ -33,6 +33,7 @@ hub.init(sio, publicFolder);
 
 hub.channel('tapOthers', 'tapOthers', ['others'], function(data) {
     // anything else you would like to do?
+    console.log('Adding in a new socket.on', data);
 })
 
 // Respond to web sockets with socket.on
