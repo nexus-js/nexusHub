@@ -24,27 +24,6 @@ hub.init(sio, publicFolder);
 
 
 
-//***	OSC Setup for sending (and receiving) OSC (to Max) ***//
-//*** Possible to move into hub.js                       ***//
-
-// var osc = require('node-osc');
-// oscServer is used for receiving osc messages (from Max)
-// var oscServer = new osc.Server(7746, '167.96.127.8');
-// oscServer.on("message", function (msg, rinfo) {
-// 			// console.log("OSC message:");
-// 			// console.log(msg);
-// 					// Setup messages to receive here //
-// 	if(msg[0] = "/goToSection") {
-// 		hub.currentSection = msg[1];
-// 		hub.shareSection(hub.currentSection);
-// 	}
-// });
-
-//***  oscClient is used to send osc messages (to Max) ***//
-// var oscClient = new osc.Client('167.96.127.8', 7745);
-
-
-
 // *********************
 // Set Hub Variables if you like.
 
