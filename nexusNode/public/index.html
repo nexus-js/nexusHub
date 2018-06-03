@@ -51,6 +51,8 @@
 
     </div>
 
+    <div id="typed-text">...</div>
+
     <div class="sec se" style="display: none;">
         <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Demo</span></h1>
         <p>
@@ -96,6 +98,9 @@
 
             demoSound.triggerPitch();
             hub.register();
+            // FIXME: move default overlay into Hub
+            document.getElementsByClassName("sd")[0].style.display = 'none';
+            document.getElementsByClassName("st")[0].style.display = 'block';
         }
 
         hub.channel('chat', null, null, function(data) {
@@ -139,6 +144,12 @@
                 "pitch": hub.user.pitch
             });
         }
+
+        hub.channel('sendText', null, ['others'], function(data) {
+            console.log('sendText: ', data)
+            var textDiv = document.getElementById('typed-text');
+            textDiv.innerHTML = data.text;
+        });
 
         function tapEnd() {
             document.getElementsByClassName("sw")[0].style.display = 'none';

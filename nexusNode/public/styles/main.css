@@ -34,6 +34,11 @@ body {
     font-size: 1.5em
 }
 
+#typed-text {
+    font-size: 7em;
+    justify-content: center;
+}
+
 .symbol {
     font-size: 2.0em;
 }

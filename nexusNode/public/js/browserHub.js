@@ -35,10 +35,6 @@ Hub.prototype.register = function() {
         note: this.user.pitch,
         location: this.user.location
     });
-
-    // FIXME: move default overlay into Hub
-    document.getElementsByClassName("sd")[0].style.display = 'none';
-    document.getElementsByClassName("st")[0].style.display = 'block';
 };
 
 Hub.prototype.log = function(l) {
@@ -49,7 +45,7 @@ Hub.prototype.init = function() {
     this.socket = io.connect(window.location.origin, {
         transports: ['websocket']
     });
-    console.log("Hub Helper Initialized!");
+    console.log("nexusHub Initialized!");
 };
 
 Hub.prototype.channel = function(oscMessage, nickname, sendTypeArray, callback) {
