@@ -19,8 +19,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-# Our app runs on port 8000. Expose it!
-# Using 8001 with Docker to be able to test it separate from running the server outside of Docker
+# Our app runs on port 3000. Expose it!
+# Using 3001 with Docker to be able to test it separate from running the server outside of Docker
 EXPOSE 3001:3000
 
 # Run the application.

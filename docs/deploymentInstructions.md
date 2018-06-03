@@ -1,10 +1,6 @@
 # Deploy a Dockerized distributed smartphone speaker composition using Hyper.sh
 
-In this workshop we will deploy a networked dice game to the internet using Hyper.sh.
-
 ## Installation and Setup
-
-Here is the [start code](https://github.com/tatecarson/chance-airports/archive/nime-workshop.zip) we will be using for the demo. If you get lost feel free to get the finished version [here](https://github.com/tatecarson/chance-airports/tree/master).
 
 ### Node
 
@@ -35,19 +31,6 @@ docker version
 Sign up for an account on Hyper.sh. You get 2 months of limited service for free after adding a credit card.
 
 Follow the instructions to generate an [API credential](https://docs.hyper.sh/hyper/GettingStarted/generate_api_credential.html). Then install the [CLI](https://docs.hyper.sh/hyper/GettingStarted/install.html) and configure with your API credentials.
-
-## A look at the composition
-
-NOTE: this section will change when i get jesse's app
-
-```
-├── .gitignore
-├── package.json
-├── index.js
-├── Dockerfile
-├── deployment.yml
-├── service.yml
-```
 
 ## Dockerizing our composition
 
@@ -98,7 +81,7 @@ docker build . -t tatecarson/nexus-hub
 Now run your container locally to see that it works. Map the container port to your machines port with `-p`.
 
 ```
-docker run -p 3000:3000 tatecarson/nexus-hub
+docker run -p 3001:3000 tatecarson/nexus-hub
 ```
 
 ## Deploy
@@ -124,7 +107,7 @@ hyper pull tatecarson/nexus-hub
 Run the container on Hyper. Below we run in detached mode, name our app on Hyper and explicitly publish ports then tell Hyper we want ot run the app we just pulled.
 
 ```
-hyper run -d --name nexus-hub -p 8000:8000 tatecarson/nexus-hub
+hyper run -d --name nexus-hub -p 3001:3000 tatecarson/nexus-hub
 ```
 
 To expose your app to the world you need to allocate a floating IP or `fip`. Only do this once per app as they are billed at a different rate.
