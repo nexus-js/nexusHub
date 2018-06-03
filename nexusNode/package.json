@@ -17,14 +17,14 @@
     },
     "homepage": "http://nexus.emdm.io/",
     "dependencies": {
-        "express": "^4.13.4",
-        "node-osc": "^2.0.3",
-        "socket.io": "^1.4.5",
         "csv-2-redis": "0.0.10",
         "csv-parser": "^1.9.3",
+        "express": "^4.13.4",
+        "node-osc": "^2.0.3",
         "parse-redis-url": "0.0.1",
         "redis": "^0.12.1",
         "rita": "^1.1.27",
+        "socket.io": "^1.4.5",
         "socket.io-redis": "^1.0.0",
         "sticky-session": "^0.1.0"
     }
