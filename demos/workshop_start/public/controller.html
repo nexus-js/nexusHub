@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>nexusHub Demo | Controller</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/browserHub.js"></script>
+    <link rel="stylesheet" href="styles/controller.css">
+    <link href="http://fonts.googleapis.com/css?family=Vollkorn" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+    <div class="sec sw">
+        <h1>nexusHub Demo Controller</h1>
+        <p>Add UI Here | <strong>UI Elements</strong></p>
+
+        <p class="url">Visit http://nexus.emdm.io on your mobile device to participate.</p>
+    </div>
+
+    <div class="sec se">
+        <div id="typed-text">...</div>
+    </div>
+
+    <script type="text/javascript">
+        var Hub = require('hub');
+        var hub = new Hub();
+        hub.init();
+        hub.user.name = "controller";
+        hub.user.pitch = 55;
+        hub.user.location = {
+            x: 0.5,
+            y: 0.5
+        }
+        hub.register();
+    </script>
+
+</body>
+
+</html>
