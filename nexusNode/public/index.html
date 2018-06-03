@@ -92,14 +92,13 @@
             console.log(hub.user.location);
 
             demoSound.triggerPitch();
-            hub.registerWithServer();
+            hub.register();
         }
-
-        hub.socket.on('chat', function(data) {
+        hub.channel('chat', null, null, function(data) {
             console.log("chat: " + data);
         });
 
-        hub.socket.on('setSection', function(data) {
+        hub.channel('setSection', null, null, function(data) {
             console.log(data);
             console.log("the section is now: " + data.title);
 
@@ -107,7 +106,7 @@
 
         });
 
-        hub.channel('itemback', null, [], function(data) {
+        hub.channel('itemback', null, 'about', function(data) {
             console.log("itemback: ", data);
         });
 
@@ -135,10 +134,12 @@
             return color;
         }
 
-
-        hub.socket.on('triggerCollide', function(data) {
+        hub.channel('triggerCollide', null, null, function(data) {
             demoSound.playSecondSound();
         });
+
+        hub.channel('triggerPitch');
+        hub.channel('triggerFirstSound', null, ['max']);
 
         var DemoSound = function() {
 
@@ -165,6 +166,7 @@
             }).connect(this.tremolo);
 
             this.synth.volume.value = -10;
+
             this.player = [];
             this.player[0] = new Tone.Player("data/mp3s/001-Causeway.mp3").toMaster();
             this.player[1] = new Tone.Player("data/mp3s/Collide.mp3").toMaster();
@@ -194,7 +196,9 @@
 
             this.triggerPitch = function() {
                 this.synth.triggerAttackRelease(this.freq(this.pitch), 5);
-                hub.socket.emit('triggerPitch', this.pitch);
+                hub.send('triggerPitch', {
+                    'pitch': this.pitch
+                });
             };
 
             this.playFirstSound = function() {
@@ -205,7 +209,9 @@
                 this.playPitch();
                 this.player[0].start();
                 // this.seqRandomize();
-                hub.socket.emit('triggerFirstSound', demoSound.pitch);
+                hub.send('triggerFirstSound', {
+                    'pitch': this.pitch
+                });
 
                 var elements = document.getElementsByClassName("mainTitle");
                 // elements[0].className += " clicked";

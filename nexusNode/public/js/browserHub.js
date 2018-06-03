@@ -7,7 +7,11 @@ require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof requ
 	@class hub      
 	nexusHub core functions - used within node code
 	```js
-	hub.receive() 
+	hub.init()		// loads socket.io
+	hub.register()		// registers with nexusHub server
+
+	hub.channel(osc, nickname, send type array, receive e.g. callback function)		// Send type array default 'others'
+	hub.send(channel, dataJSON)	// send on a created channel.
 	```
 	
 */
@@ -22,7 +26,7 @@ var Hub = function() {
     // this.init();  // FIXME: implicit init or wait to ensure socket.io and other things load?
 }
 
-Hub.prototype.registerWithServer = function() {
+Hub.prototype.register = function() {
     // Tone.startMobile();		// May need this back - check on devices.
     console.log("Registering with nexusHub\n User: " + this.user.name);
     this.socket.emit('addme', {
@@ -49,16 +53,25 @@ Hub.prototype.init = function() {
 };
 
 Hub.prototype.channel = function(oscMessage, nickname, sendTypeArray, callback) {
-    console.log('channel nickname: ' + nickname);
+    // console.log('channel nickname: ' + nickname);
     if (!nickname) {
         nickname = oscMessage;
     }
-    console.log('channel nickname: ' + nickname);
+    // console.log('channel nickname: ' + nickname);
+
+    // console.log('channel sendTypeArray: ' + sendTypeArray);
+    if (!Array.isArray(sendTypeArray)) {
+        sendTypeArray = ['others'];
+    }
+    if (sendTypeArray.length == 0) {
+        sendTypeArray = ['others'];
+    }
+    // console.log('channel sendTypeArray: ' + sendTypeArray);
 
     this.sends[nickname] = { 'chan': oscMessage, 'sendTypes': sendTypeArray };
     console.log("channel callback", callback);
     if (callback) {
-        console.log("Callback Creating socket.on!")
+        // console.log("Callback Creating socket.on!")
         this.socket.on(oscMessage, callback);
     }
 
