@@ -116,6 +116,12 @@ To expose your app to the world you need to allocate a floating IP or `fip`. Onl
 hyper fip allocate 1
 ```
 
+List IPs
+
+```
+hyper fip ls
+```
+
 Attach that IP to your app:
 
 ```
