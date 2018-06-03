@@ -1,0 +1,265 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>nexusHub Demo</title>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+
+    <link rel="stylesheet" href="styles/main.css">
+
+    <link href="http://fonts.googleapis.com/css?family=Vollkorn" rel="stylesheet" type="text/css">
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/Tone.min.js"></script>
+    <script type="text/javascript" src="js/browserHub.js"></script>
+
+</head>
+
+<body>
+    <div class="sec sw">
+
+        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Demo</span></h1>
+
+        <div class="sd">
+            <p>Demo | <strong>Jesse Allison</strong></p>
+            <p>Start by tapping your approximate location in the room.</p>
+            <svg version="1.1" id="seatMap" x="0px" y="0px" viewbox="0 0 640 445" style="max-width: 70vh; enable-background:new 0 0 640 445;">
+							<rect x="4" y="4" style="fill:none;stroke:#B3B3B3;stroke-width:8;stroke-miterlimit:10;" width="632" height="437" />
+							<rect x="77.5" y="70" style="fill:none;stroke:#4D4D4D;stroke-width:8;stroke-miterlimit:10;" width="485.1" height="350" />
+							<line style="fill:none;stroke:#4D4D4D;stroke-width:18;stroke-miterlimit:10;" x1="30" y1="40" x2="610" y2="40" />
+						</svg>
+        </div>
+
+        <div class="st" style="display: none;">
+            <p>
+                <br>
+                <br><em>Thanks for tapping!<br>
+							Please wait while more users connect.<br>
+							Tap the title above to test your audio.</em>
+                <br>
+                <button onClick="tapButton()">Tap Here</button>
+                <br>
+                <button onClick="triggerOthersButton()">Tap Others</button>
+                <br>
+                <button onClick="tapEnd()">Tap To End Session</button>
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="sec se" style="display: none;">
+        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Demo</span></h1>
+        <p>
+            <br>
+            <br><em>Thanks for tapping!<br>
+			Please visit <a href="http://nexus.emdm.io">nexus.emdm.io</a> for documentation.</em>
+        </p>
+    </div>
+
+    <script>
+        var Hub = require('hub');
+        var hub = new Hub();
+        hub.init();
+
+        hub.user.name = "a_user";
+        hub.user.color = getRandomColor();
+        console.log(hub.user.color);
+        hub.user.location = {
+            x: 0.5,
+            y: 0.5
+        }
+
+        var secNum = 0;
+
+        document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + hub.user.color;
+
+        seatMap.addEventListener("click", getClickPosition, false);
+
+        function getClickPosition(e) {
+            var m = seatMap.getScreenCTM();
+            var p = document.getElementById('seatMap').createSVGPoint();
+            p.x = e.clientX;
+            p.y = e.clientY;
+            p = p.matrixTransform(m.inverse());
+            var tx = document.getElementById('seatMap').getAttribute("viewBox").split(" ")[2];
+            var ty = document.getElementById('seatMap').getAttribute("viewBox").split(" ")[3];
+            var mx = p.x / tx;
+            var my = p.y / ty;
+
+            hub.user.location.x = mx;
+            hub.user.location.y = my;
+            console.log(hub.user.location);
+
+            demoSound.triggerPitch();
+            hub.register();
+        }
+
+        hub.channel('chat', null, null, function(data) {
+            console.log("chat: " + data);
+        });
+
+        hub.channel('setSection', null, null, function(data) {
+            console.log(data);
+            console.log("the section is now: " + data.title);
+
+            secNum = data.sect;
+
+        });
+
+        hub.channel('itemback', null, 'about', function(data) {
+            console.log("itemback: ", data);
+        });
+
+        var numClicked = 0;
+
+        hub.channel('item', 'item', ['audio', 'display'])
+
+        function tapButton() {
+            console.log("numClicked = " + numClicked);
+            hub.send('item', {
+                "item": numClicked
+            });
+
+            demoSound.playSecondSound();
+            numClicked++
+        }
+
+        hub.channel('tapOthers', null, null, function(data) {
+            console.log('Other Person: ' + data.userId);
+            demoSound.playPitch(data.pitch);
+        });
+
+        function triggerOthersButton() {
+            hub.send('tapOthers', {
+                "userId": hub.user.id,
+                "pitch": hub.user.pitch
+            });
+        }
+
+        function tapEnd() {
+            document.getElementsByClassName("sw")[0].style.display = 'none';
+            document.getElementsByClassName("se")[0].style.display = 'block';
+        }
+
+
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        hub.channel('triggerCollide', null, null, function(data) {
+            demoSound.playSecondSound();
+        });
+
+        hub.channel('triggerPitch');
+        hub.channel('triggerFirstSound', null, ['max']);
+
+        var DemoSound = function() {
+
+            this.tone = new Tone();
+
+            this.tremolo = new Tone.Tremolo({
+                "frequency": 8,
+                "type": "sine",
+                "depth": 0.6,
+                "spread": 0
+                    //"wet": 0.8
+            }).toMaster().start();
+
+            this.synth = new Tone.Synth({
+                "oscillator": {
+                    "type": "sine"
+                },
+                "envelope": {
+                    "attack": 2.0,
+                    "decay": 0.5,
+                    "sustain": 0.8,
+                    "release": 2.0
+                }
+            }).connect(this.tremolo);
+
+            this.synth.volume.value = -10;
+
+            this.player = [];
+            this.player[0] = new Tone.Player("data/mp3s/001-Causeway.mp3").toMaster();
+            this.player[1] = new Tone.Player("data/mp3s/Collide.mp3").toMaster();
+
+            Tone.Transport.start();
+
+            this.pitchCollection = [55, 57, 59, 61, 62, 64, 66, 67, 68, 69, 71, 73, 75, 76, 78, 80, 82, 83];
+
+            this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+            console.log("Pitch & Length: ", this.pitch, this.pitchCollection.length);
+
+            this.freq = function(midi) {
+                var note = Tone.Frequency(midi).midiToFrequency(midi);
+                // console.log("Midi: ", midi, note)
+                return note;
+            };
+
+            // **** Playing Notes **** //
+            this.playPitch = function(pitch) {
+                if (pitch) {
+                    this.synth.triggerAttackRelease(this.freq(pitch), 0.5);
+                } else {
+                    this.synth.triggerAttackRelease(this.freq(this.pitch), 5);
+
+                }
+            };
+
+            this.playRandomPitch = function() {
+                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+                this.synth.triggerAttackRelease(this.freq(pitch), 0.5);
+            };
+
+            this.triggerPitch = function() {
+                this.synth.triggerAttackRelease(this.freq(this.pitch), 5);
+                hub.send('triggerPitch', {
+                    'pitch': this.pitch
+                });
+            };
+
+            this.playFirstSound = function() {
+                this.player[0].start();
+            };
+
+            this.triggerFirstSound = function() {
+                this.playPitch();
+                this.player[0].start();
+                // this.seqRandomize();
+                hub.send('triggerFirstSound', {
+                    'pitch': this.pitch
+                });
+
+                var elements = document.getElementsByClassName("mainTitle");
+                // elements[0].className += " clicked";
+                elements[0].style.backgroundColor = hub.user.color;
+            };
+
+            // ****  Events ****
+
+            this.playSecondSound = function() {
+                this.player[1].start();
+                // var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+                // this.synth.triggerAttackRelease(this.freq(pitch), 5);
+                this.playRandomPitch();
+            };
+
+        };
+
+        var demoSound = new DemoSound();
+        hub.user.pitch = demoSound.pitch;
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+body {
+    margin: 0;
+    padding-left: 1.0em;
+    /*	display: flex;
+	align-items: center;
+	justify-content: center;*/
+    font-family: 'Vollkorn', serif;
+    font-size: 1.0em;
+    /*overflow: hidden;*/
+    /*position: fixed;*/
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.sec {
+    display: none;
+}
+
+.sw,
+.se {
+    display: block;
+    text-align: center;
+}
+
+.sw p {
+    font-size: 1.0em
+}
+
+.sw .url {
+    font-size: 1.5em
+}
+
+.symbol {
+    font-size: 2.0em;
+}
+
+small {
+    font-size: 0.5em;
+}
