@@ -1,5 +1,5 @@
 {
-    "name": "nexusHub Workshop",
+    "name": "nexusHub",
     "version": "0.5.0",
     "description": "Nexus hub for distributed performance.",
     "main": "nexusNode.js",

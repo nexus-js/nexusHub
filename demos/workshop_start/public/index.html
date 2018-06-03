@@ -53,7 +53,6 @@
 
         hub.user.name = "a_user";
         hub.user.color = getRandomColor();
-        console.log(hub.user.color);
         hub.user.location = {
             x: 0.5,
             y: 0.5
@@ -122,6 +121,8 @@
             this.player = [];
             this.player[0] = new Tone.Player("data/SB 66.aif").toMaster();
             this.player[1] = new Tone.Player("data/SB 71.aif").toMaster();
+            this.player[0].volume.value = -10;
+            this.player[1].volume.value = -10;
 
             Tone.Transport.start();
 
@@ -151,9 +152,9 @@
 
             this.triggerPitch = function() {
                 this.synth.triggerAttackRelease(this.freq(this.pitch), 1);
-                hub.send('triggerPitch', {
-                    'pitch': this.pitch
-                });
+                // hub.send('triggerPitch', {
+                //     'pitch': this.pitch
+                // });
             };
 
 
@@ -166,9 +167,9 @@
                 this.playPitch();
                 this.player[0].start();
                 // this.seqRandomize();
-                hub.send('triggerFirstSound', {
-                    'pitch': this.pitch
-                });
+                // hub.send('triggerFirstSound', {
+                //     'pitch': this.pitch
+                // });
             };
 
             this.playSecondSound = function() {
