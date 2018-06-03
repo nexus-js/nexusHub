@@ -117,6 +117,9 @@ hub.io.sockets.on('connection', function(socket) {
         socket.broadcast.emit('setSharedToggle', data);
     });
 
+    socket.on('tapOthers', function(data) {
+        socket.broadcast.emit('tapOthers', data);
+    });
 
     socket.on('item', function(data) {
         console.log(socket.id + " tapped item: " + data);
