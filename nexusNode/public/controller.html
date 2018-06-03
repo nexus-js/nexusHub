@@ -19,7 +19,7 @@
         <p><em><input type='text' name='txt' id='txt'></em></p>
         <p><button onclick="retrieve('txt');">send text</button></p>
         <p><button onClick="triggerOthersButton()">Tap Others</button></p>
-        <p class="url">Visit http://c.emdm.io on your mobile device to participate.</p>
+        <p class="url">Visit http://nexus.emdm.io on your mobile device to participate.</p>
     </div>
 
     <div class="sec se">
@@ -63,18 +63,16 @@
         });
 
         hub.channel('tapOthers', null, null, function(data) {
-            console.log('Other Person: ' + data.userId);
+            console.log('Other Person: ', data);
         });
 
         function triggerOthersButton() {
             hub.user.pitch = 55;
             hub.send('tapOthers', {
                 "userId": hub.user.id,
-                "pitch": hub.user.pitch
-            });
-            hub.user.pitch = 62;
-            hub.send('tapOthers', {
-                "userId": hub.user.id,
+                "name": hub.user.name,
+                "color": hub.user.color,
+                "location": hub.user.location,
                 "pitch": hub.user.pitch
             });
         }

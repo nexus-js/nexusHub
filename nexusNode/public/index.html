@@ -134,13 +134,16 @@
         }
 
         hub.channel('tapOthers', null, null, function(data) {
-            console.log('Other Person: ' + data.userId);
+            console.log('Other Person: ', data);
             demoSound.playPitch(data.pitch);
         });
 
         function triggerOthersButton() {
             hub.send('tapOthers', {
                 "userId": hub.user.id,
+                "name": hub.user.name,
+                "color": hub.user.color,
+                "location": hub.user.location,
                 "pitch": hub.user.pitch
             });
         }
