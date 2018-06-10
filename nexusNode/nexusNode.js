@@ -33,14 +33,13 @@ hub.init(sio, publicFolder);
 // *********************
 
 
-hub.channel('tapOthers', 'tapOthers', ['others'], function(data) {
-    // anything else you would like to do?
-    console.log('Adding in a new socket.on', data);
-})
 
 // Respond to web sockets with socket.on
 hub.io.sockets.on('connection', function(socket) {
+    console.log("When am I called?");
     var ioClientCounter = 0; // Can I move this outside into global vars?
+    this.socket = socket;
+    this.socketID = socket.id;
 
     socket.on('addme', function(data) {
         username = data.name;
@@ -119,29 +118,29 @@ hub.io.sockets.on('connection', function(socket) {
         socket.broadcast.emit('setSharedToggle', data);
     });
 
-    socket.on('tapOthers', function(data) {
-        socket.broadcast.emit('tapOthers', data);
-    });
+    // socket.on('tapOthers', function(data) {
+    //     socket.broadcast.emit('tapOthers', data);
+    // });
 
     socket.on('sendText', function(data) {
         console.log('sendText: ', data);
         socket.broadcast.emit('sendText', data);
     });
 
-    socket.on('item', function(data) {
-        console.log(socket.id + " tapped item: " + data);
-        // TODO: Take out all the socket.broadcast.emits.
-        // socket.broadcast.emit('chat', socket.id + " : " + data, 1);
+    // socket.on('item', function(data) {
+    //     console.log(socket.id + " tapped item: " + data);
+    //     // TODO: Take out all the socket.broadcast.emits.
+    //     // socket.broadcast.emit('chat', socket.id + " : " + data, 1);
 
-        if (hub.display.id) {
-            // hub.io.to(hub.display.id).emit('itemback', {phrase: data, color: socket.userColor}, 1);
-            hub.io.sockets.emit('itemback', { phrase: data, color: socket.userColor }, 1);
-        }
-        if (hub.audio.id) {
-            hub.io.to(hub.audio.id).emit('/causeway/phrase/number', { id: socket.id, item: data }, 1);
-            // console.log("Item", data);
-        }
-    });
+    //     if (hub.display.id) {
+    //         // hub.io.to(hub.display.id).emit('itemback', {phrase: data, color: socket.userColor}, 1);
+    //         hub.io.sockets.emit('itemback', { phrase: data, color: socket.userColor }, 1);
+    //     }
+    //     if (hub.audio.id) {
+    //         hub.io.to(hub.audio.id).emit('/causeway/phrase/number', { id: socket.id, item: data }, 1);
+    //         // console.log("Item", data);
+    //     }
+    // });
 
     socket.on('triggerPitch', function(data) {
         if (hub.audio.id) {
@@ -155,5 +154,31 @@ hub.io.sockets.on('connection', function(socket) {
         hub.sendSection(hub.currentSection);
     })
 
+    hub.channel('test', 'test', ['others'], function(data) {
+        // anything else you would like to do?
+        console.log('Adding in a new socket.on test with data:', data);
+    });
+
+    hub.channel('tapOthers', null, ['others'], function(data) {
+        socket.broadcast.emit('tapOthers', data);
+    });
+
+    hub.channel('item', null, null, function(data) {
+        console.log(socket.id + " tapped item: " + data);
+        // TODO: Take out all the socket.broadcast.emits.
+        // socket.broadcast.emit('chat', socket.id + " : " + data, 1);
+
+        if (hub.display.id) {
+            // hub.io.to(hub.display.id).emit('itemback', {phrase: data, color: socket.userColor}, 1);
+            hub.io.sockets.emit('itemback', { phrase: data, color: "socket.userColor" }, 1);
+        }
+        if (hub.audio.id) {
+            hub.io.to(hub.audio.id).emit('/causeway/phrase/number', { id: "socket.id", item: data }, 1);
+            // console.log("Item", data);
+        }
+    });
+
+    console.log("On Connect socket id: ", socket.id);
+    hub.onConnection(socket);
 
 });

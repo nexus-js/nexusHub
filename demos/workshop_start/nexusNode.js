@@ -32,7 +32,7 @@ hub.init(sio, publicFolder);
 
 // *********************
 
-
+// This will be the interface for socket.on below eventually... Perhaps Tuesday.
 hub.channel('tapOthers', 'tapOthers', ['others'], function(data) {
     // anything else you would like to do?
     console.log('Adding in a new socket.on', data);
