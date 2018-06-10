@@ -1,10 +1,6 @@
 # Deploy a Dockerized distributed smartphone speaker composition using Hyper.sh
 
-In this workshop we will deploy a networked dice game to the internet using Hyper.sh.
-
 ## Installation and Setup
-
-Here is the [start code](https://github.com/tatecarson/chance-airports/archive/nime-workshop.zip) we will be using for the demo. If you get lost feel free to get the finished version [here](https://github.com/tatecarson/chance-airports/tree/master).
 
 ### Node
 
@@ -36,19 +32,6 @@ Sign up for an account on Hyper.sh. You get 2 months of limited service for free
 
 Follow the instructions to generate an [API credential](https://docs.hyper.sh/hyper/GettingStarted/generate_api_credential.html). Then install the [CLI](https://docs.hyper.sh/hyper/GettingStarted/install.html) and configure with your API credentials.
 
-## A look at the composition
-
-NOTE: this section will change when i get jesse's app
-
-```
-├── .gitignore
-├── package.json
-├── index.js
-├── Dockerfile
-├── deployment.yml
-├── service.yml
-```
-
 ## Dockerizing our composition
 
 It is important that before this step Docker is installed, running, and that you are signed in with your Docker ID.
@@ -72,7 +55,7 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-RUN npm install -g rhizome-server
+RUN npm install
 # If you are building your code for production
 # RUN npm install --only=production
 
@@ -81,11 +64,7 @@ COPY . .
 
 # Our app runs on port 8000. Expose it!
 # Using 8001 with Docker to be able to test it separate from running the server outside of Docker
-EXPOSE 8001:8000
-
-# Specify UDP for OSC communication?
-# Same with OSC port 9001 outside of Docker maps to port 9000 used by rhizome
-EXPOSE 9001:9000/UDP
+EXPOSE 3001:3000
 
 # Run the application.
 CMD ["npm", "start"]
@@ -94,7 +73,7 @@ CMD ["npm", "start"]
 With the the `Dockerfile` now in your root directory we will build the image locally and also add a tag for uploading to DockerHub in the next step. The tag naming convention is `{dockerHub username}/{dockerhub repository name}`. In further examples replace my tag with yours.
 
 ```
-docker build . -t tatecarson/dice-game
+docker build . -t tatecarson/nexus-hub
 ```
 
 ### Run locally
@@ -102,7 +81,7 @@ docker build . -t tatecarson/dice-game
 Now run your container locally to see that it works. Map the container port to your machines port with `-p`.
 
 ```
-docker run -p 8000:8000 tatecarson/dice-game
+docker run -p 3001:3000 tatecarson/nexus-hub
 ```
 
 ## Deploy
@@ -112,7 +91,7 @@ docker run -p 8000:8000 tatecarson/dice-game
 Now push to DockerHub:
 
 ```
-docker push tatecarson/dice-game
+docker push tatecarson/nexus-hub
 ```
 
 ### Hyper
@@ -122,13 +101,13 @@ Now we can run a few commands to get our app running on Hyper. You will notice t
 First we pull from DockerHub to Hyper:
 
 ```
-hyper pull tatecarson/dice-game
+hyper pull tatecarson/nexus-hub
 ```
 
 Run the container on Hyper. Below we run in detached mode, name our app on Hyper and explicitly publish ports then tell Hyper we want ot run the app we just pulled.
 
 ```
-hyper run -d --name dice-game -p 8000:8000 tatecarson/dice-game
+hyper run -d --name nexus-hub -p 3001:3000 tatecarson/nexus-hub
 ```
 
 To expose your app to the world you need to allocate a floating IP or `fip`. Only do this once per app as they are billed at a different rate.
@@ -137,10 +116,16 @@ To expose your app to the world you need to allocate a floating IP or `fip`. Onl
 hyper fip allocate 1
 ```
 
+List IPs
+
+```
+hyper fip ls
+```
+
 Attach that IP to your app:
 
 ```
-hyper fip attach 209.177.91.57 dice-game
+hyper fip attach 209.177.91.57 nexus-hub
 ```
 
 It is very easy to remove and turn off your app when it is not in use. This is very helpful to control cost.
@@ -148,19 +133,19 @@ It is very easy to remove and turn off your app when it is not in use. This is v
 Stop the app:
 
 ```
-hyper stop dice-game
+hyper stop nexus-hub
 ```
 
 Remove the container
 
 ```
-hyper rm -f dice-game
+hyper rm -f nexus-hub
 ```
 
 Remove the image associated with the container
 
 ```
-hyper rmi tatecarson/dice-game
+hyper rmi tatecarson/nexus-hub
 ```
 
 I have collected all of the previous commands in a bash script to simplify deployment and cleanup.
@@ -172,13 +157,13 @@ I have collected all of the previous commands in a bash script to simplify deplo
 ```bash
 #!/bin/bash
 
-docker build . -t tatecarson/dice-game
-docker push tatecarson/dice-game
-hyper rm -f dice-game
-hyper rmi tatecarson/dice-game
-hyper pull tatecarson/dice-game
-hyper run -d --name dice-game -p 8000:8000 tatecarson/dice-game
-hyper fip attach 209.177.91.57 dice-game
+docker build . -t tatecarson/nexus-hub
+docker push tatecarson/nexus-hub
+hyper rm -f nexus-hub
+hyper rmi tatecarson/nexus-hub
+hyper pull tatecarson/nexus-hub
+hyper run -d --name nexus-hub -p 8000:8000 tatecarson/nexus-hub
+hyper fip attach 209.177.91.57 nexus-hub
 ```
 
 #### Remove
@@ -188,7 +173,7 @@ hyper fip attach 209.177.91.57 dice-game
 ```bash
 #!/bin/bash
 
-hyper stop dice-game
-hyper rm dice-game
-hyper rmi tatecarson/dice-game
+hyper stop nexus-hub
+hyper rm nexus-hub
+hyper rmi tatecarson/nexus-hub
 ```
