@@ -115,9 +115,12 @@ hub.io.sockets.on('connection', function(socket) {
 
     hub.channel('tap', null, ["others", "display"], function(data) {
         hub.log(`tap ${data}`);
-        hub.transmit('tap', null, data, socket);
+        hub.transmit('tap', null, data);
         //  socket.broadcast.emit('tap', data);  // just for others until a fix is made.
     });
+
+    // Don't use auto callback creation yet, it's not secure.
+    // hub.channel('tap', null, ["others", "display", "audio"]);
 
     // TODO: Should just demo this with tap ["others"] above.
     hub.channel('tapOthers', null, ["others"], function(data) {
