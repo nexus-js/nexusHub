@@ -42,6 +42,8 @@
                 <br>
                 <button onClick="tapButton()">Tap Here</button>
                 <br>
+                <button onClick="itemButton()">item Tap Here</button>
+                <br>
                 <button onClick="triggerOthersButton()">Tap Others</button>
                 <br>
                 <button onClick="tapEnd()">Tap To End Session</button>
@@ -115,6 +117,16 @@
 
         });
 
+        hub.channel('tap', null, null, function(data) {
+            hub.log(`tap received: ${data}`);
+        })
+
+        function tapButton() {
+            hub.send('tap', {
+                'tap': 1
+            });
+        }
+
         hub.channel('itemback', null, 'about', function(data) {
             console.log("itemback: ", data);
         });
@@ -123,7 +135,7 @@
 
         hub.channel('item', 'item', ['audio', 'display'])
 
-        function tapButton() {
+        function itemButton() {
             console.log("numClicked = " + numClicked);
             hub.send('item', {
                 "item": numClicked

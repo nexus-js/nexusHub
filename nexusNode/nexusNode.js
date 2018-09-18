@@ -55,21 +55,25 @@ hub.io.sockets.on('connection', function(socket) {
         // **** Standard client setup ****
         if (socket.username == "display") {
             hub.display.id = socket.id;
+            hub.discreteClients.display.id = socket.id;
             console.log("Hello display: " + hub.display.id);
         }
 
         if (socket.username == "controller") {
             hub.controller.id = socket.id;
+            hub.discreteClients.controller.id = socket.id;
             console.log("Hello Controller: " + hub.controller.id);
         }
 
         if (socket.username == "audioController") {
             hub.audio.id = socket.id;
+            hub.discreteClients.audio.id = socket.id;
             console.log("Hello Audio Controller: " + hub.audio.id);
         }
 
         if (socket.username == "maxController") {
             hub.audio.id = socket.id;
+            hub.discreteClients.audio.id = socket.id;
             console.log("Hello MaxMSP Controller: " + hub.max.id);
         }
 
@@ -111,8 +115,8 @@ hub.io.sockets.on('connection', function(socket) {
 
     hub.channel('tap', null, ["others", "display"], function(data) {
         hub.log(`tap ${data}`);
-        socket.broadcast.emit('tap', data);
-        // hub.transmit('tap', toWhom, data);
+        hub.transmit('tap', null, data, socket);
+        //  socket.broadcast.emit('tap', data);  // just for others until a fix is made.
     });
 
     // TODO: Should just demo this with tap ["others"] above.

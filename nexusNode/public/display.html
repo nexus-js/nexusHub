@@ -44,6 +44,12 @@
         hub.user.pitch = 55;
         hub.register();
 
+        hub.channel('tap', null, null, function(data) {
+            console.log('Tap: ', data);
+            var textDiv = document.getElementById('typed-text');
+            textDiv.innerHTML = data.tap;
+        })
+
         hub.channel('tapOthers', null, null, function(data) {
             console.log('Other Person: ', data);
 

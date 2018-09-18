@@ -17,8 +17,11 @@ Potential roadmap for the development of Nexus
 [ ] Channels not explicitly (over)written automatically send based on the toWhom array
 [ ] create catch-all socket.on function that simply mirrors out any information received on the specified transmit channels.
 [ ] instantiate SocketIO in Hub.prototype.init instead of node file. 
+[ ] type the hub.channel commands so that each element in the input list has a label. e.g. message, nickname, toWhom, data
 
 ## browserHub.js
+[ ] move default overlay into browserHub.js handling first click initiation of audio, present first instructions and select relative location if wanted.
+
 
 ## maxHub.js
 
