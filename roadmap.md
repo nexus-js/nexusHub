@@ -22,7 +22,7 @@ Potential roadmap for the development of Nexus
 
 ## browserHub.js
 [ ] move default overlay into browserHub.js handling first click initiation of audio, present first instructions and select relative location if wanted.
-
+[ ] remove default 'others' sendtype. This should be handled by the server if nothing is specified.
 
 ## maxHub.js
 

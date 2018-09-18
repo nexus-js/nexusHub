@@ -109,8 +109,7 @@ hub.io.sockets.on('connection', function(socket) {
     hub.channel('test', 'test', ['others'], function(data) {
         console.log('Adding in a new socket.on test with data:', data);
         hub.log(`test ${data}`);
-        socket.broadcast.emit('test', data);
-        // hub.transmit('test', toWhom, data);
+        hub.transmit('test', null, data);
     });
 
     hub.channel('tap', null, ["others", "display"], function(data) {
@@ -125,41 +124,33 @@ hub.io.sockets.on('connection', function(socket) {
     // TODO: Should just demo this with tap ["others"] above.
     hub.channel('tapOthers', null, ["others"], function(data) {
         hub.log(`tapOthers ${data}`);
-        socket.broadcast.emit('tapOthers', data);
-        // hub.transmit('tapOthers', toWhom, data);
+        hub.transmit('tapOthers', null, data);
+        // socket.broadcast.emit('tapOthers', data);
     });
 
     hub.channel('shareToggle', null, ["others"], function(data) {
         hub.log(`shareToggle ${data}`);
-        socket.broadcast.emit('shareToggle', data);
-        // hub.transmit('shareToggle', toWhom, data);
+        hub.transmit('shareToggle', null, data);
     });
 
     hub.channel('shareColor', null, ["others"], function(data) {
         hub.log(`shareColor ${data}`);
-        socket.broadcast.emit('shareColor', data);
-        // hub.transmit('shareColor', toWhom, data);
+        hub.transmit('shareColor', null, data);
     });
 
     hub.channel('sendText', null, ["others", "display"], function(data) {
         hub.log(`sendText ${data}`);
-        socket.broadcast.emit('sendText', data);
-        // hub.transmit('sendText', toWhom, data);
+        hub.transmit('sendText', null, data);
     });
 
     hub.channel('triggerPitch', null, ["others", "display"], function(data) {
         hub.log(`triggerPitch ${data}`);
-        socket.broadcast.emit('triggerPitch', data);
-        // hub.transmit('triggerPitch', toWhom, data);
+        hub.transmit('triggerPitch', null, data);
     });
 
     hub.channel('triggerMaxPitch', null, ["max"], function(data) {
         hub.log(`triggerMaxPitch ${data}`);
-        socket.broadcast.emit('triggerMaxPitch', data);
-        // hub.transmit('triggerMaxPitch', toWhom, data);
-        //       if (hub.audio.id) {
-        //	hub.io.to(hub.audio.id).emit('/triggerMaxPitch', { id: socket.id }, data);
-        //}
+        hub.transmit('triggerMaxPitch', null, data);
     });
 
     hub.channel('section', null, null, function(data) {
@@ -170,17 +161,14 @@ hub.io.sockets.on('connection', function(socket) {
 
     hub.channel('item', null, null, function(data) {
         console.log(socket.id + " tapped item: " + data);
-        // TODO: Take out all the socket.broadcast.emits.
-        // socket.broadcast.emit('chat', socket.id + " : " + data, 1);
-
-        if (hub.display.id) {
-            // hub.io.to(hub.display.id).emit('itemback', {phrase: data, color: socket.userColor}, 1);
-            hub.io.sockets.emit('itemback', { phrase: data, color: "socket.userColor" }, 1);
+        // This could be done with the sendTypes array, but if you want to overwrite what is being sent, here you go:
+        if (hub.discreteClientCheck('display')) {
+            hub.io.to(hub.discreteClients['display'].id).emit('itemback', { phrase: data, color: "socket.userColor" }, 1);
         }
-        if (hub.audio.id) {
-            hub.io.to(hub.audio.id).emit('/item', { id: "socket.id", item: data }, 1);
-            // console.log("Item", data);
+        if (hub.discreteClientCheck('audio')) {
+            hub.io.to(hub.discreteClients[audio].id).emit('/item', { id: "socket.id", item: data }, 1);
         }
+        hub.transmit('itemback', null, data);
     });
 
     console.log("On Connect socket id: ", socket.id);
