@@ -29,6 +29,8 @@ hub.init(sio, publicFolder);
 // *********************
 // Set Hub Variables if you like.
 
+hub.currentSection = 0; // current section.
+hub.sectionTitles = ["Welcome", "Preface", "Section 1", "Section 2", "End"];
 
 // *********************
 
@@ -41,55 +43,48 @@ hub.io.sockets.on('connection', function(socket) {
     this.socket = socket;
     this.socketID = socket.id;
 
-    socket.on('addme', function(data) {
-        username = data.name;
-        var userColor = data.color;
-        var userNote = data.note;
-        var userLocation = data.location;
+    hub.channel('register', null, null, function(data) {
+        // TODO: iterate through data and add these properties dynamically.
+        // Can add any other pertinent details to the socket to be retrieved later
 
-        if (username == "display") {
+        socket.username = typeof data.name !== 'undefined' ? data.name : "a_user";
+        socket.userColor = typeof data.color !== 'undefined' ? data.color : "#CCCCCC";
+        socket.userNote = typeof data.note !== 'undefined' ? data.note : " ";
+        socket.userLocation = typeof data.location !== 'undefined' ? data.location : { x: 0.5, y: 0.5 };
+
+        // **** Standard client setup ****
+        if (socket.username == "display") {
             hub.display.id = socket.id;
             console.log("Hello display: " + hub.display.id);
         }
 
-        if (username == "controller") {
+        if (socket.username == "controller") {
             hub.controller.id = socket.id;
             console.log("Hello Controller: " + hub.controller.id);
         }
 
-        if (username == "audioController") {
+        if (socket.username == "audioController") {
             hub.audio.id = socket.id;
             console.log("Hello Audio Controller: " + hub.audio.id);
         }
 
-        if (username == "maxController") {
+        if (socket.username == "maxController") {
             hub.audio.id = socket.id;
             console.log("Hello MaxMSP Controller: " + hub.max.id);
         }
 
-        if (username == "a_user") {
+        if (socket.username == "a_user") {
             hub.ioClients.push(socket.id);
         }
 
-        socket.username = username; // allows the username to be retrieved anytime the socket is used
-        // Can add any other pertinent details to the socket to be retrieved later
-        socket.userLocation = userLocation;
-        socket.userColor = userColor;
-        socket.userNote = userNote;
-        // .emit to send message back to caller.
-        socket.emit('chat', 'SERVER: You have connected. Hello: ' + username + " " + socket.id + 'Color: ' + socket.userColor);
-        // .broadcast to send message to all sockets.
-        //socket.broadcast.emit('chat', 'SERVER: A new user has connected: ' + username + " " + socket.id + 'Color: ' + socket.userColor);
-        // socket.emit('bump', socket.username, "::dude::");
         var title = hub.getSection(hub.currentSection);
 
-        if (username == "a_user") {
-            //console.log("Hello:", socket.username, "currentSection:", hub.currentSection, "id:", socket.id, "userColor:", socket.userColor, "userLocation:", socket.userLocation, "userNote:", socket.userNote);
-        }
+        //        socket.emit('chat', 'SERVER: You have connected. Hello: ' + username);
 
-        socket.emit('setSection', { sect: hub.currentSection, title: title });
+        // hub.sendSection(hub.currentSection, ['self']);
+
         // hub.io.sockets.emit('setSection', {sect: sect, title: title});
-        if (username == "a_user") {
+        if (socket.username == "a_user") {
             // oscClient.send('/causeway/registerUser', socket.id, socket.userColor, socket.userLocation[0],socket.userLocation[1], socket.userNote);
             if (hub.audio.id) {
                 hub.io.to(hub.audio.id).emit('/causeway/registerUser', { id: socket.id, color: socket.userColor, locationX: socket.userLocation[0], locationY: socket.userLocation[1], note: socket.userNote }, 1);
@@ -103,64 +98,67 @@ hub.io.sockets.on('connection', function(socket) {
         hub.io.sockets.emit('chat', 'SERVER: ' + socket.id + ' has left the building');
     });
 
-    socket.on('sendchat', function(data) {
-        // Transmit to everyone who is connected //
-        hub.io.sockets.emit('chat', socket.username, data);
-    });
 
-    socket.on('tap', function(data) {
-        // console.log("Data: ", data.inspect);
-        // oscClient.send('/tapped', 1);
-        socket.broadcast.emit('tapped', socket.username, 1);
-    });
-
-    socket.on('shareToggle', function(data) {
-        socket.broadcast.emit('setSharedToggle', data);
-    });
-
-    // socket.on('tapOthers', function(data) {
-    //     socket.broadcast.emit('tapOthers', data);
-    // });
-
-    socket.on('sendText', function(data) {
-        console.log('sendText: ', data);
-        socket.broadcast.emit('sendText', data);
-    });
-
-    // socket.on('item', function(data) {
-    //     console.log(socket.id + " tapped item: " + data);
-    //     // TODO: Take out all the socket.broadcast.emits.
-    //     // socket.broadcast.emit('chat', socket.id + " : " + data, 1);
-
-    //     if (hub.display.id) {
-    //         // hub.io.to(hub.display.id).emit('itemback', {phrase: data, color: socket.userColor}, 1);
-    //         hub.io.sockets.emit('itemback', { phrase: data, color: socket.userColor }, 1);
-    //     }
-    //     if (hub.audio.id) {
-    //         hub.io.to(hub.audio.id).emit('/causeway/phrase/number', { id: socket.id, item: data }, 1);
-    //         // console.log("Item", data);
-    //     }
-    // });
-
-    socket.on('triggerPitch', function(data) {
-        if (hub.audio.id) {
-            hub.io.to(hub.audio.id).emit('/causeway/triggerPitch', { id: socket.id }, 1);
-        }
-    });
-
-    socket.on('section', function(data) {
-        console.log("Section is now: " + data);
-        hub.currentSection = data;
-        hub.sendSection(hub.currentSection);
-    })
+    // Model for most nexusHub interactions create a channel and a response you want to have happen
+    // TODO: remove the need for the socket.broadcast.emit and uncomment the hub.transmit as the replacement.
 
     hub.channel('test', 'test', ['others'], function(data) {
-        // anything else you would like to do?
         console.log('Adding in a new socket.on test with data:', data);
+        hub.log(`test ${data}`);
+        socket.broadcast.emit('test', data);
+        // hub.transmit('test', toWhom, data);
     });
 
-    hub.channel('tapOthers', null, ['others'], function(data) {
+    hub.channel('tap', null, ["others", "display"], function(data) {
+        hub.log(`tap ${data}`);
+        socket.broadcast.emit('tap', data);
+        // hub.transmit('tap', toWhom, data);
+    });
+
+    // TODO: Should just demo this with tap ["others"] above.
+    hub.channel('tapOthers', null, ["others"], function(data) {
+        hub.log(`tapOthers ${data}`);
         socket.broadcast.emit('tapOthers', data);
+        // hub.transmit('tapOthers', toWhom, data);
+    });
+
+    hub.channel('shareToggle', null, ["others"], function(data) {
+        hub.log(`shareToggle ${data}`);
+        socket.broadcast.emit('shareToggle', data);
+        // hub.transmit('shareToggle', toWhom, data);
+    });
+
+    hub.channel('shareColor', null, ["others"], function(data) {
+        hub.log(`shareColor ${data}`);
+        socket.broadcast.emit('shareColor', data);
+        // hub.transmit('shareColor', toWhom, data);
+    });
+
+    hub.channel('sendText', null, ["others", "display"], function(data) {
+        hub.log(`sendText ${data}`);
+        socket.broadcast.emit('sendText', data);
+        // hub.transmit('sendText', toWhom, data);
+    });
+
+    hub.channel('triggerPitch', null, ["others", "display"], function(data) {
+        hub.log(`triggerPitch ${data}`);
+        socket.broadcast.emit('triggerPitch', data);
+        // hub.transmit('triggerPitch', toWhom, data);
+    });
+
+    hub.channel('triggerMaxPitch', null, ["max"], function(data) {
+        hub.log(`triggerMaxPitch ${data}`);
+        socket.broadcast.emit('triggerMaxPitch', data);
+        // hub.transmit('triggerMaxPitch', toWhom, data);
+        //       if (hub.audio.id) {
+        //	hub.io.to(hub.audio.id).emit('/triggerMaxPitch', { id: socket.id }, data);
+        //}
+    });
+
+    hub.channel('section', null, null, function(data) {
+        hub.log(`Section is now: ${data}`);
+        hub.currentSection = data;
+        hub.sendSection(hub.currentSection);
     });
 
     hub.channel('item', null, null, function(data) {
@@ -173,7 +171,7 @@ hub.io.sockets.on('connection', function(socket) {
             hub.io.sockets.emit('itemback', { phrase: data, color: "socket.userColor" }, 1);
         }
         if (hub.audio.id) {
-            hub.io.to(hub.audio.id).emit('/causeway/phrase/number', { id: "socket.id", item: data }, 1);
+            hub.io.to(hub.audio.id).emit('/item', { id: "socket.id", item: data }, 1);
             // console.log("Item", data);
         }
     });
