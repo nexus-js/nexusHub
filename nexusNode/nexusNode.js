@@ -27,7 +27,7 @@ hub.init(sio, publicFolder);
 
 
 // *********************
-// Set Hub Variables if you like.
+// Set Hub Variables  or add more if you like.
 
 hub.currentSection = 0; // current section.
 hub.sectionTitles = ["Welcome", "Preface", "Section 1", "Section 2", "End"];
@@ -97,9 +97,10 @@ hub.io.sockets.on('connection', function(socket) {
         }
     });
 
+    // Traditional socket assignments work just fine
     socket.on('disconnect', function() {
         // hub.ioClients.remove(socket.id);	// FIXME: Remove client if they leave
-        hub.io.sockets.emit('chat', 'SERVER: ' + socket.id + ' has left the building');
+        hub.log('SERVER: ' + socket.id + ' has left the building');
     });
 
 

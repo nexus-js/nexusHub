@@ -19,9 +19,10 @@ Potential roadmap for the development of Nexus
 [ ] instantiate SocketIO in Hub.prototype.init instead of node file. 
 [ ] type the hub.channel commands so that each element in the input list has a label. e.g. message, nickname, toWhom, data
 [ ] hub.transmit to 'others' is sending to everyone.  cant use the typical socket.broadcast must use io.something..
+[ ] iterate through registration user data and add these properties to the socket dynamically.
 
 ## browserHub.js
-[ ] move default overlay into browserHub.js handling first click initiation of audio, present first instructions and select relative location if wanted.
+[ ] *** move default overlay into browserHub.js handling first click initiation of audio, present first instructions and select relative location if wanted.
 [ ] remove default 'others' sendtype. This should be handled by the server if nothing is specified.
 
 ## maxHub.js

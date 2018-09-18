@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>nexusHub Demo</title>
+    <title>nexusHub Sample & Testing</title>
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
@@ -19,13 +19,13 @@
 </head>
 
 <body>
-    <div class="sec sw">
+    <div class="display">
 
-        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Demo</span></h1>
+        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Sample</span></h1>
 
-        <div class="sd">
-            <p>Demo | <strong>Jesse Allison</strong></p>
-            <p>Start by tapping your approximate location in the room.</p>
+        <div class="nexusOverlay">
+            <p>Example | <strong>Testing</strong></p>
+            <p>Start by tapping your approximate location in the space.</p>
             <svg version="1.1" id="seatMap" x="0px" y="0px" viewbox="0 0 640 445" style="max-width: 70vh; enable-background:new 0 0 640 445;">
 							<rect x="4" y="4" style="fill:none;stroke:#B3B3B3;stroke-width:8;stroke-miterlimit:10;" width="632" height="437" />
 							<rect x="77.5" y="70" style="fill:none;stroke:#4D4D4D;stroke-width:8;stroke-miterlimit:10;" width="485.1" height="350" />
@@ -33,11 +33,11 @@
 						</svg>
         </div>
 
-        <div class="st" style="display: none;">
+        <div class="mainDisplay">
             <p>
                 <br>
                 <br><em>Thanks for tapping!<br>
-							Please wait while more users connect.<br>
+							Have more users connect.<br>
 							Tap the title above to test your audio.</em>
                 <br>
                 <button onClick="tapButton()">Tap Here</button>
@@ -45,7 +45,7 @@
                 <button onClick="itemButton()">item Tap Here</button>
                 <br>
                 <button onClick="triggerOthersButton()">Tap Others</button>
-                <br>
+                <br><br>
                 <button onClick="tapEnd()">Tap To End Session</button>
             </p>
 
@@ -55,8 +55,7 @@
 
     <div id="typed-text">...</div>
 
-    <div class="sec se" style="display: none;">
-        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Demo</span></h1>
+    <div class="endDisplay" style="display: none;">
         <p>
             <br>
             <br><em>Thanks for tapping!<br>
@@ -101,8 +100,8 @@
             demoSound.triggerPitch();
             hub.register();
             // FIXME: move default overlay into Hub
-            document.getElementsByClassName("sd")[0].style.display = 'none';
-            document.getElementsByClassName("st")[0].style.display = 'block';
+            document.getElementsByClassName("nexusOverlay")[0].style.display = 'none';
+            document.getElementsByClassName("mainDisplay")[0].style.display = 'block';
         }
 
         hub.channel('chat', null, null, function(data) {
@@ -167,8 +166,8 @@
         });
 
         function tapEnd() {
-            document.getElementsByClassName("sw")[0].style.display = 'none';
-            document.getElementsByClassName("se")[0].style.display = 'block';
+            document.getElementsByClassName("mainDisplay")[0].style.display = 'none';
+            document.getElementsByClassName("endDisplay")[0].style.display = 'block';
         }
 
 

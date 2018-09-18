@@ -14,20 +14,18 @@ body {
     user-select: none;
 }
 
-.end {
-    display: none;
-}
-
 .url {
     position: absolute;
-    font-size: 0.75em;
-    color: rgba(255, 255, 255, 0.35);
+    font-size: 1.2em;
+    color: rgba(255, 255, 255, 0.4);
     padding: 10px;
     top: 0;
     right: 0;
 }
 
 #typed-text {
+    margin: 5px;
+    padding: 5px;
     white-space: pre;
     font-size: 3em;
 }
@@ -37,16 +35,20 @@ body {
     font-size: 3.5em;
 }
 
-.sw {
+.mainDisplay {
     text-align: center;
 }
 
-.sw p {
+.mainDisplay p {
     font-size: 1.2em
 }
 
-.sw .url {
+.mainDisplay .url {
     font-size: 1.5em
+}
+
+.endDisplay {
+    display: none;
 }
 
 #causeway-text span {
