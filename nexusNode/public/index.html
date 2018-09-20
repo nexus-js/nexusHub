@@ -14,7 +14,9 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="js/Tone.min.js"></script>
+    <script type="text/javascript" src="js/nexusUI.js"></script>
     <script type="text/javascript" src="js/browserHub.js"></script>
+    <script type="text/javascript" src="js/StartAudioContext.js"></script>
 
 </head>
 
@@ -45,6 +47,8 @@
                 <button onClick="itemButton()">item Tap Here</button>
                 <br>
                 <button onClick="triggerOthersButton()">Tap Others</button>
+                <br>
+                <div id="slider"></div>
                 <br><br>
                 <button onClick="tapEnd()">Tap To End Session</button>
             </p>
@@ -76,11 +80,19 @@
             y: 0.5
         }
 
+        let slider = new Nexus.Slider('#slider', {
+            'mode': 'absolute'
+        });
+
         var secNum = 0;
 
         document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + hub.user.color;
 
         seatMap.addEventListener("click", getClickPosition, false);
+        StartAudioContext(Tone.context, '#seatMap').then(function() {
+            console.log("AudioStarted");
+            //reverb.generate();
+        })
 
         function getClickPosition(e) {
             var m = seatMap.getScreenCTM();
@@ -158,6 +170,18 @@
                 "pitch": hub.user.pitch
             });
         }
+
+        hub.channel('sharedSlider', null, null, function(data) {
+            slider.value = data.value;
+        });
+        slider.on('change', function(v) {
+            // do not send along if not changed from a user interaction.
+            if (slider.clicked) {
+                hub.send('sharedSlider', {
+                    value: v
+                });
+            };
+        });
 
         hub.channel('sendText', null, ['others'], function(data) {
             console.log('sendText: ', data)

@@ -134,6 +134,11 @@ hub.io.sockets.on('connection', function(socket) {
         hub.transmit('shareToggle', null, data);
     });
 
+    hub.channel('sharedSlider', null, null, function(data) {
+        // hub.transmit('sharedSlider', null, data);
+        socket.broadcast.emit('sharedSlider', data);
+    });
+
     hub.channel('shareColor', null, ["others"], function(data) {
         hub.log(`shareColor ${data}`);
         hub.transmit('shareColor', null, data);
