@@ -15,6 +15,7 @@ var sio = require('socket.io');
 var publicFolder = __dirname + '/public';
 
 var NexusHub = require('../lib/hub/hub');
+// var NexusHub = require('./js/hub');
 var hub = new NexusHub();
 
 // update any server settings before initialization
