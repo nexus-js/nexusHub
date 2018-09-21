@@ -14,37 +14,50 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="js/Tone.min.js"></script>
+    <script type="text/javascript" src="js/nexusUI.js"></script>
     <script type="text/javascript" src="js/browserHub.js"></script>
+    <script type="text/javascript" src="js/StartAudioContext.js"></script>
 
 </head>
 
+
 <body>
-    <div class="sec sw">
+    <div class="display">
 
-        <h1 onclick="workshopSound.triggerFirstSound();"><span class="mainTitle">nexusHub Workshop</span></h1>
+        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Workshop</span></h1>
 
-        <div class="sd">
-            <p>Workshop | <strong>Starting Page</strong></p>
-            <p>Start by tapping your approximate location in the room.</p>
+        <div class="nexusOverlay">
+            <p>Example | <strong>Testing</strong></p>
+            <p>Start by tapping your approximate location in the space.</p>
             <svg version="1.1" id="seatMap" x="0px" y="0px" viewbox="0 0 640 445" style="max-width: 70vh; enable-background:new 0 0 640 445;">
-							<rect x="4" y="4" style="fill:none;stroke:#B3B3B3;stroke-width:8;stroke-miterlimit:10;" width="632" height="437" />
-							<rect x="77.5" y="70" style="fill:none;stroke:#4D4D4D;stroke-width:8;stroke-miterlimit:10;" width="485.1" height="350" />
-							<line style="fill:none;stroke:#4D4D4D;stroke-width:18;stroke-miterlimit:10;" x1="30" y1="40" x2="610" y2="40" />
-						</svg>
+					<rect x="4" y="4" style="fill:none;stroke:#B3B3B3;stroke-width:8;stroke-miterlimit:10;" width="632" height="437" />
+					<rect x="77.5" y="70" style="fill:none;stroke:#4D4D4D;stroke-width:8;stroke-miterlimit:10;" width="485.1" height="350" />
+					<line style="fill:none;stroke:#4D4D4D;stroke-width:18;stroke-miterlimit:10;" x1="30" y1="40" x2="610" y2="40" />
+				</svg>
         </div>
 
-        <div class="st" style="display: none;">
+        <div class="mainDisplay">
             <p>
                 <br>
-                <br><em>Now do whatever you like...<br>
-							Please wait while more users connect.<br>
-							Tap the title above to test play one sound.</em>
-                <div>Add anything else you like here (or elsewhere, it's flexible)</div>
+                <br><em>Thanks for tapping!<br>
+					Have more users connect.<br>
+					Tap the title above to test your audio.</em>
+                <br> --Insert Elements to make interactive here--
             </p>
+
         </div>
+
     </div>
 
     <div id="typed-text">...</div>
+
+    <div class="endDisplay" style="display: none;">
+        <p>
+            <br>
+            <br><em>Thanks for tapping!<br>
+	Please visit <a href="http://nexus.emdm.io">nexus.emdm.io</a> for documentation.</em>
+        </p>
+    </div>
 
     <script>
         var Hub = require('hub');
@@ -58,9 +71,16 @@
             y: 0.5
         }
 
-        // Useful Relative location of the user in the space.  Not necessary, but useful.
-        seatMap.addEventListener("click", getClickPosition, false);
+        document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + hub.user.color;
 
+        seatMap.addEventListener("click", getClickPosition, false);
+        StartAudioContext(Tone.context, '#seatMap').then(function() {
+            console.log("AudioStarted");
+            //reverb.generate();
+        })
+
+        // Useful Relative location of the user in the space.  Not necessary, but useful.
+        // TODO: possibly move default overlay into Hub
         function getClickPosition(e) {
             var m = seatMap.getScreenCTM();
             var p = document.getElementById('seatMap').createSVGPoint();
@@ -76,11 +96,11 @@
             hub.user.location.y = my;
             console.log(hub.user.location);
 
-            workshopSound.triggerPitch();
+            demoSound.triggerPitch();
             hub.register();
-            // FIXME: move default overlay into Hub
-            document.getElementsByClassName("sd")[0].style.display = 'none';
-            document.getElementsByClassName("st")[0].style.display = 'block';
+
+            document.getElementsByClassName("nexusOverlay")[0].style.display = 'none';
+            document.getElementsByClassName("mainDisplay")[0].style.display = 'block';
         }
 
         function getRandomColor() {
@@ -152,9 +172,9 @@
 
             this.triggerPitch = function() {
                 this.synth.triggerAttackRelease(this.freq(this.pitch), 1);
-                // hub.send('triggerPitch', {
-                //     'pitch': this.pitch
-                // });
+                hub.send('triggerPitch', null, null, {
+                    'pitch': this.pitch
+                });
             };
 
 
@@ -166,10 +186,9 @@
             this.triggerFirstSound = function() {
                 this.playPitch();
                 this.player[0].start();
-                // this.seqRandomize();
-                // hub.send('triggerFirstSound', {
-                //     'pitch': this.pitch
-                // });
+                hub.send('triggerFirstSound', null, null, {
+                    'pitch': this.pitch
+                });
             };
 
             this.playSecondSound = function() {

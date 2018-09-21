@@ -2,8 +2,8 @@ body {
     margin: 0;
     padding-left: 1.0em;
     /*	display: flex;
-	align-items: center;
-	justify-content: center;*/
+align-items: center;
+justify-content: center;*/
     font-family: 'Vollkorn', serif;
     font-size: 1.0em;
     /*overflow: hidden;*/
@@ -16,27 +16,48 @@ body {
     user-select: none;
 }
 
-.sec {
+.nexusOverlay {
+    display: block;
+}
+
+.mainDisplay {
     display: none;
 }
 
-.sw,
-.se {
+.endDisplay {
+    display: none;
+    text-align: center;
+}
+
+.display {
     display: block;
     text-align: center;
 }
 
-.sw p {
+.display p {
     font-size: 1.0em
 }
 
-.sw .url {
+.display .url {
     font-size: 1.5em
 }
 
 #typed-text {
     font-size: 7em;
+    text-align: center;
     justify-content: center;
+}
+
+#sliderWrapper {
+    width: auto;
+    text-align: center;
+    justify-content: center;
+}
+
+#slider {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
 }
 
 .symbol {

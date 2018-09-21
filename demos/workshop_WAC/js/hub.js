@@ -13,6 +13,7 @@
 	
 */
 
+// Todo: create catch-all socket.on function that simply mirrors out any information received on the specified transmit channels.
 
 var Hub = function() {
 
@@ -22,6 +23,23 @@ var Hub = function() {
     this.sectionTitles = ["Welcome", "Preface", "Section 1", "Section 2", "Section 3", "End"];
 
     // Specific clients who we only want one instance of
+
+    // Specific clients who we only want one instance of
+    this.discreteClients = {
+        display: {
+            id: null
+        },
+        controller: {
+            id: null
+        },
+        audio: {
+            id: null
+        },
+        max: {
+            id: null
+        }
+    }
+
     this.display = {
         id: ""
     };
@@ -50,6 +68,8 @@ Hub.prototype.channel = function(oscMessage, nickname, sendTypeArray, callback) 
     }
     // console.log('channel nickname: ' + nickname);
 
+    // console.log("socket? ", socket.id)
+
     // console.log('channel sendTypeArray: ' + sendTypeArray);
     if (!Array.isArray(sendTypeArray)) {
         sendTypeArray = ['others'];
@@ -58,32 +78,147 @@ Hub.prototype.channel = function(oscMessage, nickname, sendTypeArray, callback) 
         sendTypeArray = ['others'];
     }
     // console.log('channel sendTypeArray: ' + sendTypeArray);
-
-    this.channels[nickname] = { 'chan': oscMessage, 'sendTypes': sendTypeArray };
-
-    console.log("channel callback", callback);
-    if (callback) {
-        // console.log("Callback Creating socket.on!")
+    // FIXME: Don't use this yet.  It's not secure. Must be a better way.
+    if (!typeof callback === "function" || typeof callback === "undefined") {
         //this.socket.on(oscMessage, callback);
+        // callback = function(data) {
+        //     hub.log(`tap: ${data}`);
+        //     hub.transmit(nickname, sendTypeArray, data);
+        // }
+
+        // console.log("Creating Callback");
+        let func = "hub.log(`" + nickname + ": ${data}`); hub.transmit('" + nickname + "', [" + sendTypeArray + "], data);";
+        console.log(func);
+        // callback = new Function("data", func);
+        // console.log("callback function? " + typeof callback);
     }
+    // console.log("channel callback", callback);
+
+    this.channels[nickname] = { 'chan': oscMessage, 'sendTypes': sendTypeArray, 'callback': callback };
 
 };
 
+Hub.prototype.onConnection = function(sock) {
+    console.log("onConnection");
+    console.log("socket id: ", sock.id);
+    for (var key in this.channels) {
+        var oscMessage = this.channels[key].chan;
+        // console.log(oscMessage);
+        if (this.channels[key].hasOwnProperty('callback')) {
+            var callback = this.channels[key].callback
+                // console.log(key + " -> " + callback);
+            console.log("adding callback: ", key);
+            sock.on(oscMessage, callback);
+        }
+    }
+}
 
+// Transmit functions
+
+// others
+
+// all
+
+// self
+
+// display
+
+// controller
+
+// audio
+
+// max
+
+// group
+
+Hub.prototype.transmit = function(nickname, toWhom, data) {
+    let where;
+    if (toWhom instanceof String) {
+        where = [toWhom];
+    } else if (toWhom instanceof Array) {
+        where = toWhom;
+    } else if (this.channels.hasOwnProperty(nickname) && this.channels[nickname].sendTypes instanceof Array) {
+        where = this.channels[nickname].sendTypes;
+    } else {
+        where = ["others"];
+    }
+
+    let message;
+    if (this.channels.hasOwnProperty(nickname)) {
+        message = this.channels[nickname].chan;
+    } else {
+        message = nickname;
+    }
+
+
+    console.log("Channel: ", message, " Destinations: ", where);
+
+    // where.forEach(function(destination)  // had scope issues wanting to call this.log, etc. j
+    for (var i = 0; i < where.length; i++) {
+        let destination = where[i];
+        // this.log(`checking for ${destination}`);
+        if (destination == "self") {
+            socket.emit(message, data);
+        } else if (destination == "others") {
+            // sending to all clients except sender
+            // FIME: This sends to everyone! socket doesn't exist within this function. must find a way to use io to send to all but self
+            this.io.emit(message, data);
+        } else if (destination == "all") {
+            this.io.emit(message, data);
+        } else if (this.discreteClientCheck(destination)) {
+            // Individual Discrete Clients
+            this.io.to(this[destination].id).emit(message, data);
+        } else {
+            this.log(`destination ${destination} does not exist`);
+        }
+
+        // other possibilities?
+        // sending to all clients in 'game' room except sender
+        // if (destination == "group") socket.to('game').emit(data);
+        // sending to all clients in namespace 'myNamespace', including sender
+        // if (destination == "namespace") io.of('myNamespace').emit(data);
+        // sending to individual socketid (private message)
+        // if (destination == "user") socket.to( socketid ).emit(data);
+    };
+};
+
+Hub.prototype.discreteClientCheck = function(whom) {
+    if (this.discreteClients.hasOwnProperty(whom)) {
+        this.log(`discreteClientCheck for: ${whom} :: ${this.discreteClients[whom].id ? 1 : 0}`);
+        return this.discreteClients[whom].id ? 1 : 0;
+    } else {
+        return 0;
+    }
+}
 
 
 
 // **** SECTIONS ****
 
-// Todo: Add sections to correspond to organ interactions
-// hub.sendSection(currentSection);	 // Sets everyone's section
-Hub.prototype.sendSection = function(sect) {
+// to set everyone's section to the same thing
+Hub.prototype.setSection = function(sect, toWhom) {
+    if (sect === 'undefined') {
+        sect = this.currentSection;
+    }
+
     var title = this.getSection(sect);
     this.io.sockets.emit('setSection', { sect: sect, title: title });
-    if (this.audio.id) {
-        this.io.to(this.audio.id).emit('currentSection', { section: sect, title: title }, 1);
-        // console.log("Section sent", sect);
+
+    // hub.transmit('audio')
+};
+
+// TODO: Do I still need this?
+// hub.sendSection(currentSection);	 // Sets everyone's section
+Hub.prototype.sendSection = function(sect, toWhom) {
+    console.log("sendSection:", socket.id);
+    if (sect === 'undefined') {
+        sect = this.currentSection;
     }
+
+    var title = this.getSection(sect);
+    // this.io.sockets.emit('setSection', { sect: sect, title: title });
+    this.transmit("setSection", toWhom, { sect: sect, title: title });
+
 };
 
 // Section shared from Max to UIs
@@ -95,17 +230,10 @@ Hub.prototype.shareSection = function(sect) {
 Hub.prototype.getSection = function(sect) {
     var title = "none";
 
-    if (sect == 'w') {
-        title = this.sectionTitles[0];
-    }
-
-    if (sect == 'e') {
-        title = this.sectionTitles[35];
-    }
-
-    if (sect !== 'e' && sect !== 'w') {
-        sect++;
+    if (sect !== 'undefined') {
         title = this.sectionTitles[sect];
+    } else {
+        title = this.sectionTitles[this.currentSection];
     }
 
     return title;
@@ -115,6 +243,7 @@ Hub.prototype.log = function(l) {
     console.log('Hub Log: ' + l);
 };
 
+// TODO: instantiate SocketIO here instead of node file. 
 Hub.prototype.init = function(sio, publicFolder) {
     // Setup web app - using express to serve pages
     var express = require('../node_modules/express');
