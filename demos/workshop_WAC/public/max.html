@@ -47,8 +47,8 @@
             window.max.outlet('registerUser' + " " + data.id + " " + data.color + " " + data.locationX + " " + data.locationY + " " + data.note);
         });
 
-        hub.channel('triggerCollide', null, null, function(data) {
-            window.max.outlet('triggerCollide' + " " + data.id);
+        hub.channel('tap', null, null, function(data) {
+            window.max.outlet('tap' + " " + data.value);
         });
 
 
