@@ -43,6 +43,15 @@
 					Have more users connect.<br>
 					Tap the title above to test your audio.</em>
                 <br> --Insert Elements to make interactive here--
+                <p>
+                    <button onclick="tap()">Tap!</button>
+                </p>
+                <div id="sliderWrapper">
+                    <div id="slider"></div>
+                </div>
+            </p>
+            <p>
+                <button onClick="tapEnd()">Tap To End Session</button>
             </p>
 
         </div>
@@ -69,6 +78,49 @@
         hub.user.location = {
             x: 0.5,
             y: 0.5
+        }
+
+
+        hub.channel('tap', null, ['display'], function(data) {
+            hub.log("I'm Tapped");
+        });
+
+        function tap() {
+            workshopSound.playPitch();
+            hub.send('tap', 'tapit');
+            // hub.send('tap', 1);
+            // hub.send('tap', {"value":1});
+        }
+
+        let slider = new Nexus.Slider('#slider', {
+            'mode': 'absolute'
+        });
+
+        hub.channel('sharedSlider', null, null, function(data) {
+            slider.value = data.value;
+        });
+        slider.on('change', function(v) {
+            // do not send along if not changed from a user interaction.
+            if (slider.clicked) {
+                hub.send('sharedSlider', {
+                    value: v
+                });
+            };
+        });
+
+        hub.channel('sendText', null, ['others'], function(data) {
+            console.log('sendText: ', data)
+            var textDiv = document.getElementById('typed-text');
+            textDiv.innerHTML = data.text;
+        });
+
+        hub.channel('end', null, null, function(data) {
+            tapEnd();
+        });
+
+        function tapEnd() {
+            document.getElementsByClassName("mainDisplay")[0].style.display = 'none';
+            document.getElementsByClassName("endDisplay")[0].style.display = 'block';
         }
 
         document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + hub.user.color;

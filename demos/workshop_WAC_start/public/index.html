@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>nexusHub Workshop</title>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+
+    <link rel="stylesheet" href="styles/main.css">
+
+    <link href="http://fonts.googleapis.com/css?family=Vollkorn" rel="stylesheet" type="text/css">
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/Tone.min.js"></script>
+    <script type="text/javascript" src="js/nexusUI.js"></script>
+    <script type="text/javascript" src="js/browserHub.js"></script>
+    <script type="text/javascript" src="js/StartAudioContext.js"></script>
+
+</head>
+
+
+<body>
+    <div class="display">
+
+        <h1 onclick="workshopSound.triggerFirstSound();"><span class="mainTitle">nexusHub Workshop</span></h1>
+
+        <div class="nexusOverlay">
+            <p>Example | <strong>Testing</strong></p>
+            <p>Start by tapping your approximate location in the space.</p>
+            <svg version="1.1" id="seatMap" x="0px" y="0px" viewbox="0 0 640 445" style="max-width: 70vh; enable-background:new 0 0 640 445;">
+					<rect x="4" y="4" style="fill:none;stroke:#B3B3B3;stroke-width:8;stroke-miterlimit:10;" width="632" height="437" />
+					<rect x="77.5" y="70" style="fill:none;stroke:#4D4D4D;stroke-width:8;stroke-miterlimit:10;" width="485.1" height="350" />
+					<line style="fill:none;stroke:#4D4D4D;stroke-width:18;stroke-miterlimit:10;" x1="30" y1="40" x2="610" y2="40" />
+				</svg>
+        </div>
+
+        <div class="mainDisplay">
+            <p>
+                <br>
+                <br><em>Thanks for tapping!<br>
+					Have more users connect.<br>
+					Tap the title above to test your audio.</em>
+                <br> --Insert Elements to make interactive here--
+            </p>
+
+        </div>
+
+    </div>
+
+    <div id="typed-text">...</div>
+
+    <div class="endDisplay" style="display: none;">
+        <p>
+            <br>
+            <br><em>Thanks for tapping!<br>
+	Please visit <a href="http://nexus.emdm.io">nexus.emdm.io</a> for documentation.</em>
+        </p>
+    </div>
+
+    <script>
+        var Hub = require('hub');
+        var hub = new Hub();
+        hub.init();
+
+        hub.user.name = "a_user";
+        hub.user.color = getRandomColor();
+        hub.user.location = {
+            x: 0.5,
+            y: 0.5
+        }
+
+        document.getElementsByTagName("body")[0].style.borderLeft = "15px solid " + hub.user.color;
+
+        seatMap.addEventListener("click", getClickPosition, false);
+        StartAudioContext(Tone.context, '#seatMap').then(function() {
+            console.log("AudioStarted");
+            //reverb.generate();
+        })
+
+        // Useful Relative location of the user in the space.  Not necessary, but useful.
+        // TODO: possibly move default overlay into Hub
+        function getClickPosition(e) {
+            var m = seatMap.getScreenCTM();
+            var p = document.getElementById('seatMap').createSVGPoint();
+            p.x = e.clientX;
+            p.y = e.clientY;
+            p = p.matrixTransform(m.inverse());
+            var tx = document.getElementById('seatMap').getAttribute("viewBox").split(" ")[2];
+            var ty = document.getElementById('seatMap').getAttribute("viewBox").split(" ")[3];
+            var mx = p.x / tx;
+            var my = p.y / ty;
+
+            hub.user.location.x = mx;
+            hub.user.location.y = my;
+            console.log(hub.user.location);
+
+            workshopSound.triggerPitch();
+            hub.register();
+
+            document.getElementsByClassName("nexusOverlay")[0].style.display = 'none';
+            document.getElementsByClassName("mainDisplay")[0].style.display = 'block';
+        }
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        var WorkshopSound = function() {
+
+            this.tone = new Tone();
+
+            this.tremolo = new Tone.Tremolo({
+                "frequency": 8,
+                "type": "sine",
+                "depth": 0.6,
+                "spread": 0
+                    //"wet": 0.8
+            }).toMaster().start();
+
+            this.synth = new Tone.Synth({
+                "oscillator": {
+                    "type": "sine"
+                },
+                "envelope": {
+                    "attack": 2.0,
+                    "decay": 0.5,
+                    "sustain": 0.8,
+                    "release": 2.0
+                }
+            }).connect(this.tremolo);
+
+            this.synth.volume.value = -10;
+
+            this.player = [];
+            this.player[0] = new Tone.Player("data/SB_66.mp3").toMaster();
+            this.player[1] = new Tone.Player("data/SB_71.mp3").toMaster();
+            this.player[0].volume.value = -10;
+            this.player[1].volume.value = -10;
+
+            Tone.Transport.start();
+
+            this.pitchCollection = [55, 57, 59, 61, 62, 64, 66, 67, 68, 69, 71, 73, 75, 76, 78, 80, 82, 83];
+
+            this.pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+
+            this.freq = function(midi) {
+                var note = Tone.Frequency(midi).midiToFrequency(midi);
+                // console.log("Midi: ", midi, note)
+                return note;
+            };
+
+            // **** Playing Notes **** //
+            this.playPitch = function(pitch) {
+                if (pitch) {
+                    this.synth.triggerAttackRelease(this.freq(pitch), 0.5);
+                } else {
+                    this.synth.triggerAttackRelease(this.freq(this.pitch), 1);
+                }
+            };
+
+            this.playRandomPitch = function() {
+                var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+                this.synth.triggerAttackRelease(this.freq(pitch), 0.5);
+            };
+
+            this.triggerPitch = function() {
+                this.synth.triggerAttackRelease(this.freq(this.pitch), 1);
+                // hub.send('triggerPitch', null, null, {
+                //     'pitch': this.pitch
+                // });
+            };
+
+
+            // **** Playing Soundfiles **** //
+            this.playFirstSound = function() {
+                this.player[0].start();
+            };
+
+            this.triggerFirstSound = function() {
+                this.playPitch();
+                this.player[0].start();
+                // hub.send('triggerFirstSound', null, null, {
+                //     'pitch': this.pitch
+                // });
+            };
+
+            this.playSecondSound = function() {
+                this.player[1].start();
+                // var pitch = this.pitchCollection[Math.floor(Math.random() * (this.pitchCollection.length))];
+                // this.synth.triggerAttackRelease(this.freq(pitch), 5);
+                this.playRandomPitch();
+            };
+
+        };
+
+        var workshopSound = new WorkshopSound();
+        hub.user.pitch = workshopSound.pitch;
+    </script>
+
+</body>
+
+</html>

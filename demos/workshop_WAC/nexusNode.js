@@ -107,10 +107,30 @@ hub.io.sockets.on('connection', function(socket) {
         hub.transmit('test', null, data);
     });
 
-    hub.channel('tap', null, ["others", "display"], function(data) {
-        hub.log(`tap ${data}`);
+    // hub.channel('tap', null, ["others", "display"], function(data) {
+    //     hub.log(`tap ${data}`);
+    //     hub.transmit('tap', null, data);
+    //     //  socket.broadcast.emit('tap', data);  // just for others until a fix is made.
+    // });
+
+    hub.channel('tap', null, ['display'], function(data) {
+        hub.log("Recieved Tap");
         hub.transmit('tap', null, data);
-        //  socket.broadcast.emit('tap', data);  // just for others until a fix is made.
+    });
+
+    hub.channel('sharedSlider', null, null, function(data) {
+        // hub.transmit('sharedSlider', null, data);
+        socket.broadcast.emit('sharedSlider', data); // just for others until a fix is made.
+    });
+
+    hub.channel('sendText', null, ["others", "display"], function(data) {
+        hub.log(`sendText ${data}`);
+        hub.transmit('sendText', null, data);
+    });
+
+    hub.channel('end', null, ["others"], function(data) {
+        hub.log(`end ${data}`);
+        hub.transmit('end', null, data);
     });
 
     // Don't use auto callback creation yet, it's not secure.

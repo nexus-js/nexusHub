@@ -1,0 +1,88 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Causeway</title>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <link rel="stylesheet" href="/styles/main.css">
+
+    <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/browserHub.js"></script>
+    <!-- <script type="text/javascript" src="js/Tone.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <p>Whatever you would like to click on within [jWeb]</p>
+    <button onclick="socket.emit('triggerBeginning')">Beginning</button>
+
+    <script>
+        var Hub = require('hub');
+        var hub = new Hub();
+        hub.init();
+        hub.user.name = "maxController";
+        hub.user.pitch = 66;
+        hub.register();
+
+        var socket = io.connect(window.location.origin, {
+            transports: ['websocket']
+        });
+
+
+        hub.channel('setSection', null, null, function(data) {
+            console.log("The section is now: " + data.title);
+            window.max.outlet('section' + " " + data.title);
+        });
+
+        hub.channel('currentSection', null, null, function(data) {
+            window.max.outlet('currentSection' + " " + data.section + " " + data.title);
+        });
+
+        hub.channel('registerUser', null, null, function(data) {
+            window.max.outlet('registerUser' + " " + data.id + " " + data.color + " " + data.locationX + " " + data.locationY + " " + data.note);
+        });
+
+        hub.channel('tap', null, null, function(data) {
+            window.max.outlet('tap' + " " + data.value);
+        });
+
+
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            window.max.outlet('DOM ready');
+            var i = 0;
+            var dictName = 'testDict';
+            var dictText = document.getElementById('dict');
+
+            window.max.bindInlet('resetCounter', function() {
+                i = 0;
+                window.max.outlet('reset');
+            });
+
+            document.getElementById('the_click_button').addEventListener('click', function() {
+                window.max.outlet('click', ++i);
+            });
+
+        });
+    </script>
+
+</body>
+
+
+
+</html>

@@ -16,6 +16,15 @@
     <div class="sec sw">
         <h1>nexusHub Workshop Controller</h1>
         <p>Add UI Here | <strong>UI Elements</strong></p>
+        <p>
+            <p>Type Something | <strong>Send Something</strong></p>
+            <p><em><input type='text' name='txt' id='txt'></em></p>
+            <p><button onclick="retrieve('txt');">send text</button></p>
+        </p>
+        <p>
+            <button onClick="tapEnd()">Tap To End Session</button>
+        </p>
+
 
         <p class="url">Visit http://nexus.emdm.io for more information.</p>
     </div>
@@ -37,6 +46,26 @@
         hub.register();
 
         //****** Add any code you like here
+
+        hub.channel('sendText', null, ['others'])
+
+        function retrieve(id) {
+            var txtbox = document.getElementById(id);
+            var value = txtbox.value;
+            hub.send("sendText", {
+                'text': value
+            });
+            var textDiv = document.getElementById('typed-text');
+            textDiv.innerHTML = value;
+        }
+
+        hub.channel('end');
+
+        function tapEnd() {
+            hub.send('end', 'end');
+            // document.getElementsByClassName("mainDisplay")[0].style.display = 'none';
+            // document.getElementsByClassName("endDisplay")[0].style.display = 'block';
+        }
     </script>
 
 </body>

@@ -45,6 +45,12 @@
         hub.register();
 
         //******* Anything to add here?
+
+        hub.channel('tap', null, null, function(data) {
+            hub.log("I'm Tapped");
+            var textDiv = document.getElementById('typed-text');
+            textDiv.innerHTML = data.value;
+        });
     </script>
 
     <video autoplay muted loop id="bgvid">
