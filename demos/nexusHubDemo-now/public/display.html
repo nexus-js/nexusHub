@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>nexusHub Sample | Theater Display</title>
+    <link rel="stylesheet" href="styles/display.css">
+    <link href="http://fonts.googleapis.com/css?family=Vollkorn" rel="stylesheet" type="text/css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/browserHub.js"></script>
+</head>
+
+<body>
+
+    <div class="url">nx.now.sh</div>
+
+    <div class="mainDisplay">
+        <h1>nexusHub</h1>
+        <p>nexusHub Sample | <strong>Theater Display</strong></p>
+        <br>
+
+        <div id="typed-text">
+        </div>
+
+        <p><em>Tapping is the new snapping. Take your phones off silent, turn up the volume, and navigate to the URL below:</em></p>
+        <h2>http://nx.now.sh</h2>
+        <br />
+        <p>If you need WiFi use...
+            <br> Network: eduroam
+            <br> Username: ?
+            <br> Password: ?</p>
+    </div>
+
+
+    <div class="endDisplay">
+        <p>Need something at the end? Reveal it when you end it.</p>
+    </div>
+
+    <script>
+        var Hub = require('hub');
+        var hub = new Hub();
+        hub.init();
+        hub.user.name = "display";
+        hub.user.pitch = 55;
+        hub.register();
+
+        hub.channel('tap', null, null, function(data) {
+            console.log('Tap: ', data);
+            var textDiv = document.getElementById('typed-text');
+            textDiv.innerHTML = data.tap;
+        })
+
+        hub.channel('tapOthers', null, null, function(data) {
+            console.log('Other Person: ', data);
+
+            var textDiv = document.getElementById('typed-text');
+            textDiv.innerHTML = data.name;
+            colr = data.color;
+            if (colr) {
+                textDiv.style.color = colr;
+            }
+        });
+    </script>
+
+    <video autoplay muted loop id="bgvid">
+		<source src="data/therm.mp4" type="video/mp4">
+	</video>
+
+</body>
+
+</html>

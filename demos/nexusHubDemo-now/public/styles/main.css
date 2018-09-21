@@ -1,0 +1,69 @@
+body {
+    margin: 0;
+    padding-left: 1.0em;
+    /*	display: flex;
+align-items: center;
+justify-content: center;*/
+    font-family: 'Vollkorn', serif;
+    font-size: 1.0em;
+    /*overflow: hidden;*/
+    /*position: fixed;*/
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.nexusOverlay {
+    display: block;
+}
+
+.mainDisplay {
+    display: none;
+}
+
+.endDisplay {
+    display: none;
+    text-align: center;
+}
+
+.display {
+    display: block;
+    text-align: center;
+}
+
+.display p {
+    font-size: 1.0em
+}
+
+.display .url {
+    font-size: 1.5em
+}
+
+#typed-text {
+    font-size: 7em;
+    text-align: center;
+    justify-content: center;
+}
+
+#sliderWrapper {
+    width: auto;
+    text-align: center;
+    justify-content: center;
+}
+
+#slider {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.symbol {
+    font-size: 2.0em;
+}
+
+small {
+    font-size: 0.5em;
+}
