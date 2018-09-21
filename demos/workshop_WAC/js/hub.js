@@ -137,7 +137,15 @@ Hub.prototype.transmit = function(nickname, toWhom, data) {
         where = [toWhom];
     } else if (toWhom instanceof Array) {
         where = toWhom;
+    } else if (data.sendTypes instanceof Array) {
+        console.log("sendTypes")
+        console.log("data.sendTypes?" + data.sendTypes);
+        console.log("array?" + data.sendTypes instanceof Array);
+        where = data.sendTypes;
     } else if (this.channels.hasOwnProperty(nickname) && this.channels[nickname].sendTypes instanceof Array) {
+        console.log("nickname")
+        console.log("array?" + this.channels[nickname].sendTypes);
+        console.log("array?" + this.channels[nickname].sendTypes instanceof Array);
         where = this.channels[nickname].sendTypes;
     } else {
         where = ["others"];

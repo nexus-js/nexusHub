@@ -24,7 +24,7 @@
 <body>
     <div class="display">
 
-        <h1 onclick="demoSound.triggerFirstSound();"><span class="mainTitle">nexusHub Workshop</span></h1>
+        <h1 onclick="workshopSound.triggerFirstSound();"><span class="mainTitle">nexusHub Workshop</span></h1>
 
         <div class="nexusOverlay">
             <p>Example | <strong>Testing</strong></p>
@@ -96,7 +96,7 @@
             hub.user.location.y = my;
             console.log(hub.user.location);
 
-            demoSound.triggerPitch();
+            workshopSound.triggerPitch();
             hub.register();
 
             document.getElementsByClassName("nexusOverlay")[0].style.display = 'none';
@@ -139,8 +139,8 @@
             this.synth.volume.value = -10;
 
             this.player = [];
-            this.player[0] = new Tone.Player("data/SB 66.aif").toMaster();
-            this.player[1] = new Tone.Player("data/SB 71.aif").toMaster();
+            this.player[0] = new Tone.Player("data/SB_66.mp3").toMaster();
+            this.player[1] = new Tone.Player("data/SB_71.mp3").toMaster();
             this.player[0].volume.value = -10;
             this.player[1].volume.value = -10;
 
@@ -172,9 +172,9 @@
 
             this.triggerPitch = function() {
                 this.synth.triggerAttackRelease(this.freq(this.pitch), 1);
-                hub.send('triggerPitch', null, null, {
-                    'pitch': this.pitch
-                });
+                // hub.send('triggerPitch', null, null, {
+                //     'pitch': this.pitch
+                // });
             };
 
 
@@ -186,9 +186,9 @@
             this.triggerFirstSound = function() {
                 this.playPitch();
                 this.player[0].start();
-                hub.send('triggerFirstSound', null, null, {
-                    'pitch': this.pitch
-                });
+                // hub.send('triggerFirstSound', null, null, {
+                //     'pitch': this.pitch
+                // });
             };
 
             this.playSecondSound = function() {
