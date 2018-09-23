@@ -112,8 +112,8 @@ require = (function() {
 
         var User = function() {
             this.id = 'none';
-            this.name = "";
-            this.color;
+            this.name = "a_user";
+            this.color = 'blue';
             this.location = {
                 x: 0,
                 y: 0

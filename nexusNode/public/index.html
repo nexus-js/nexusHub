@@ -49,6 +49,14 @@
                 <button onClick="triggerOthersButton()">Tap Others</button>
                 <br>
                 <div id="slider"></div>
+                <p>
+                    <button onClick="test1()">Test 1</button>
+                    <button onClick="test2()">Test 2</button>
+                    <button onClick="test3()">Test 3</button>
+                    <button onClick="test4()">Test 4</button>
+                    <button onClick="test5()">Test 5</button>
+                    <button onClick="test6()">Test 6</button>
+                </p>
                 <br><br>
                 <button onClick="tapEnd()">Tap To End Session</button>
             </p>
@@ -83,6 +91,73 @@
         let slider = new Nexus.Slider('#slider', {
             'mode': 'absolute'
         });
+        hub.channel('sharedSlider', null, null, function(data) {
+            slider.value = data.value;
+        });
+        slider.on('change', function(v) {
+            // do not send along if not changed from a user interaction.
+            if (slider.clicked) {
+                hub.send('sharedSlider', {
+                    value: v
+                });
+            };
+        });
+
+
+        // Full Channel Declaration Standard transmit to 'others'
+        // expected output: 
+        hub.channel('test1', null, null, function(data) {
+            console.log('test 1 received: ', data);
+        })
+
+        function test1() {
+            console.log('test1 activated');
+            hub.transmit('test1', null, {
+                'test': '1'
+            });
+        }
+
+        hub.channel('test2', null, ['display'], function(data) {
+            console.log('test 2 received: ', data);
+        })
+
+        function test2() {
+            hub.transmit('test2', null, {
+                'test': 2
+            });
+        }
+
+        // test3 overriding the channel declaration within the transmit function
+        hub.channel('test3', null, ['controller'], function(data) {
+            console.log('test 3 received: ', data);
+        })
+
+        function test3() {
+            hub.transmit('test3', ['all'], {
+                'test': 3
+            });
+        }
+
+        // test4 overriding simplified channel declaration within the transmit function
+        hub.channel('test4')
+
+        function test4() {
+            hub.transmit('test4', ['display'], {
+                'test': 4
+            });
+        }
+
+        // test5 no channel declaration just a transmit function
+        function test5() {
+            hub.transmit('test5', ['display'], {
+                'test': 5
+            });
+        }
+
+        // Just sending something.
+        function test6() {
+            hub.send('test6', 6);
+        }
 
         var secNum = 0;
 
@@ -170,18 +245,6 @@
                 "pitch": hub.user.pitch
             });
         }
-
-        hub.channel('sharedSlider', null, null, function(data) {
-            slider.value = data.value;
-        });
-        slider.on('change', function(v) {
-            // do not send along if not changed from a user interaction.
-            if (slider.clicked) {
-                hub.send('sharedSlider', {
-                    value: v
-                });
-            };
-        });
 
         hub.channel('sendText', null, ['others'], function(data) {
             console.log('sendText: ', data)

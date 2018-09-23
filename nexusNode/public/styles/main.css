@@ -49,8 +49,15 @@ body {
 }
 
 #sliderWrapper {
+    width: auto;
     text-align: center;
     justify-content: center;
+}
+
+#slider {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
 }
 
 .symbol {

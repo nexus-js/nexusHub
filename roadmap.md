@@ -38,3 +38,65 @@ Potential roadmap for the development of Nexus
 ## nexusCluster
 
 ## 
+
+## Ideal API
+
+_Full Declaration_
+
+	hub.channel('sharedSlider', 'sharedSlider', ['others'}, function(data) {
+	    // hub.transmit('sharedSlider', null, data);
+	    socket.broadcast.emit('sharedSlider', data); // just for others until a fix is made.
+	});
+
+_Simplified Declaration_
+Allows for quick declaration of a channel on the server with typical usage defaults.
+
+	hub.channel('sharedSlider')
+
+Utilizes the defaults of
+nickname: oscName
+toWhom: ['null'] e.g. ['others'] unless defined by the sender in the client
+callback: {hub.transmit('oscName', null, data);}
+
+_Automatic Channel Definition_
+
+if no channel is created on the server and an unrecognized transmission is received, it is simply passed on to the destinations array or ['others'] if none exists.
+
+If no channel is created on the browser client but a send or transmit is used, it automatically sends the message, but it won't receive on that channel.
+
+
+## Destinations
+
+destinations can be defined for any channel, send/transmit, 
+
+	data.destinations = ['others', 'self', 'all', 'display', 'audio', 'controller', 'max', 'user defined', 'name-user.name', 'group-group.name']
+	default = ['others']
+
+	hub.transmit(channelNickname, destinations, data);
+	hub.send(channelNickname, data);
+
+a hub.send implies no change of destination - e.g. whatever was declared upstream such as in the hub.channel definition will be used.  If no destination is specified anywhere, the default destination of ['others'] is used.
+
+Precedence is by where the destinations are declared from lowest precedence to highest precedence. e.g. starting from the default, any declaration further down the chain will take precedence. 
+
+data.destinationPrecedence = default ['others'] = 0, Server channel = 4, browser client channel = 3, server transmit = 2, browser client transmit = 1
+
+## Data
+
+Any data to send is done as a json object. If the data to be sent is a string, number, or array, it will be turned into a json object with the key of 'value' 
+
+	hub.send('playNote', 64);
+	hub.send('playNote', '64');
+	hub.send('playNote', {'value'=64});
+
+result in the same thing.
+
+This means that retrieval on the other side is done with:
+
+function(data) {
+	let val = data.value
+}
+
+This may seem like an arbitrary constraint at first, but it standardises receiving code so that you don't access some data directly as data and some data via dot notation such as data.color or data.pitch.  
+
+

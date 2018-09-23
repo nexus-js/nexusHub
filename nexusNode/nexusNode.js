@@ -114,6 +114,35 @@ hub.io.sockets.on('connection', function(socket) {
         hub.transmit('test', null, data);
     });
 
+
+    hub.channel('test1', null, null, function(data) {
+        hub.log("test1", data);
+        hub.transmit('test1', null, data);
+    });
+    hub.channel('test2', null, null, function(data) {
+        hub.log("test2", data);
+        hub.transmit('test2', null, data);
+    });
+    hub.channel('test3', null, null, function(data) {
+        hub.log("test3", data);
+        hub.transmit('test3', null, data);
+    });
+    hub.channel('test4', null, null, function(data) {
+        hub.log("test4", data);
+        hub.transmit('test4', null, data);
+    });
+    hub.channel('test5', null, null, function(data) {
+        hub.log("test5", data);
+        hub.transmit('test5', null, data);
+    });
+    hub.channel('test6', null, null, function(data) {
+        hub.log("test6", data);
+        hub.transmit('test6', null, data);
+    });
+
+
+
+
     hub.channel('tap', null, ["others", "display"], function(data) {
         hub.log(`tap ${data}`);
         hub.transmit('tap', null, data);
