@@ -5,9 +5,10 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "buildMusic": "browserify -r ./lib/modules/music.js:music -o dist/music.js",
+        "buildHub": "cp ./lib/hub/hub.js dist/hub.js",
         "buildBrowserHub": "browserify -r ./lib/hub/browserHub.js:hub -o dist/browserHub.js",
-        "testbuildBrowserHub": "browserify -r ./lib/hub/browserHub.js:hub -o nexusNode/public/js/browserHub.js"
+        "testbuildBrowserHub": "browserify -r ./lib/hub/browserHub.js:hub -o nexusNode/public/js/browserHub.js",
+        "buildMusic": "browserify -r ./lib/modules/music.js:music -o dist/music.js"
     },
     "repository": {
         "type": "git",
