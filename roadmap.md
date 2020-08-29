@@ -2,6 +2,8 @@
 # Roadmap 
 Potential roadmap for the development of Nexus
 
+[ ] change in approach - updating to ES6
+
 ## Docs
 
 [ ] document main commands for hub.js, browserHub.js, and maxHub.js
@@ -14,16 +16,20 @@ Potential roadmap for the development of Nexus
 [ ] file asset upload and sharing
 [ ] auto populate folders of sounds
 [ ] recording from device or application to shared asset folder
-[ ] Channels not explicitly (over)written automatically send based on the toWhom array
+[x] Channels not explicitly (over)written automatically send based on the toWhom array
 [ ] create catch-all socket.on function that simply mirrors out any information received on the specified transmit channels.
 [ ] instantiate SocketIO in Hub.prototype.init instead of node file. 
-[ ] type the hub.channel commands so that each element in the input list has a label. e.g. message, nickname, toWhom, data
-[ ] hub.transmit to 'others' is sending to everyone.  cant use the typical socket.broadcast must use io.something..
+[ ] type the hub.channel commands so that each element in the input list has a label. e.g. channel, channelNickname, destinations, data
+[ ] hub.transmit to 'others' is sending to everyone.  cant use the typical socket.broadcast must use io.something.. .bind perhaps?
 [ ] iterate through registration user data and add these properties to the socket dynamically.
+[ ] move to discreteClients json entirely.  
+[ ] dynamically add users by user.name to the discreteClients list.
 
 ## browserHub.js
 [ ] *** move default overlay into browserHub.js handling first click initiation of audio, present first instructions and select relative location if wanted.
-[ ] remove default 'others' sendtype. This should be handled by the server if nothing is specified.
+[x] remove default 'others' sendtype. This should be handled by the server if nothing is specified. handled by destinationPrecedence now
+[x] Channels not explicitly (over)written automatically send based on the destinations array
+[ ] Check the datatype of the data to send and make it into a json. example ['value'=3]
 
 ## maxHub.js
 
@@ -37,7 +43,9 @@ Potential roadmap for the development of Nexus
 
 ## nexusCluster
 
-## 
+## ??
+
+---
 
 ## Ideal API
 
@@ -87,7 +95,7 @@ Any data to send is done as a json object. If the data to be sent is a string, n
 
 	hub.send('playNote', 64);
 	hub.send('playNote', '64');
-	hub.send('playNote', {'value'=64});
+	hub.send('playNote', {'value':64});
 
 result in the same thing.
 
