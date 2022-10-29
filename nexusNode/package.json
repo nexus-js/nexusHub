@@ -24,8 +24,8 @@
         "parse-redis-url": "0.0.1",
         "redis": "^0.12.1",
         "rita": "^1.1.27",
-        "socket.io": "^1.4.5",
-        "socket.io-redis": "^1.0.0",
+        "socket.io": "^4.5.3",
+        "socket.io-redis": "^6.1.1",
         "sticky-session": "^0.1.0"
     }
 }
